@@ -1,0 +1,19 @@
+.p-tree{
+    border : none;
+}
+.p-tree-container{
+    padding : 0;
+}
+.admin-two-table {
+    width: 50%;
+}
+.action-container-table{
+    display : flex;
+    gap:10px;
+    align-items :center;
+}
+.action-container-table button {
+    width : 10px;
+    padding :5px 20px;
+    border-radius : 6px;
+}

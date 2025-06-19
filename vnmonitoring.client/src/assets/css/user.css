@@ -1,0 +1,306 @@
+﻿
+
+#mapbox-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+#map-container {
+    height: 100%;
+    width: 100%;
+    background-color: lightgrey;
+}
+.nav-layout {
+    background-color: #1565c0;
+    color : white;
+    height : 60px;
+}
+.nav-layout .name-province{
+    font-size : 24px;
+    padding-left : 20px;
+    border-left : 1px solid white;
+}
+.map-navbar {
+    position: absolute;
+    z-index: 10;
+    background-color: transparent;
+    right: 0;
+}
+
+.container-data-monitoring p, .container-data-monitoring h5 {
+    margin: 0;
+    padding: 0;
+}
+.item-data-monitoring{
+    padding : 10px;
+    min-width:400px;
+    cursor:pointer;
+    transition: all 0.2s ease-in; 
+}
+.item-data-monitoring:hover {
+    border-radius:6px;
+    background-color: rgba(0, 0, 0, 0.09);
+}
+.container-data-monitoring {
+    position: absolute;
+    z-index: 1;
+    top: 10px;
+    bottom: 10px;
+    left: 10px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    max-width:450px;
+}
+.container-data-monitoring .list-item-monitoring{
+    overflow-y: scroll;
+    flex: 1;
+    overflow-y: auto;
+}
+.container-data-monitoring div {
+    background-color:transparent;
+}
+.search-buttom {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+}
+.item-data-monitoring .item-line-1 {
+    color: white;
+}
+.item-data-monitoring .item-line-2 {
+    color: #bcbcbc;
+    font-size : 14px;
+    gap : 10px;
+}
+.item-data-monitoring .item-line-2 p{
+    white-space : nowrap;
+    overflow : hidden;
+}
+.item-data-monitoring .item-line-2 img{
+    width: 16px;
+}
+.list-item-monitoring::-webkit-scrollbar {
+    width: 10px;
+}
+.list-item-monitoring::-webkit-scrollbar-track {
+    border-radius: 0px 6px 6px 0px;
+}
+.list-item-monitoring::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: rgb(136 136 136 / 50%);
+}
+.text-norain,.text-small, .text-medium, .text-heavy, .text-heavier{
+    display : flex;
+    align-items:center;
+}
+.text-small {
+    color: #1dade9;
+}
+
+.text-medium {
+    color: #009300;
+}
+
+.text-heavy {
+    color: #ff9600;
+}
+
+.text-heavier {
+    color: #d84544;
+}
+.popup-table th, .popup-table td {
+    padding: .5rem .5rem;
+    text-align:center;
+}
+
+.norain tr td:first-child, .smallrain tr td:first-child, .mediumrain tr td:first-child, .heavyrain tr td:first-child,
+.heavierrain tr td:first-child {
+    text-wrap: nowrap;
+}
+
+.norain tr td:last-child, .smallrain tr td:last-child, .mediumrain tr td:last-child, .heavyrain tr td:last-child,
+.heavierrain tr td:last-child {
+    text-align: center;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.norain i, .smallrain i, .mediumrain i, .heavyrain i, .heavierrain i {
+    font-size: 8px;
+    margin: 0px 3px;
+}
+
+.mapboxgl-popup-close-button {
+    font-size: 20px;
+}
+
+.smallrain i, .text-small {
+    color: #1dade9;
+}
+
+.mediumrain i, .text-medium {
+    color: #009300;
+}
+
+.heavyrain i, .text-heavy {
+    color: #ff9600;
+}
+
+.heavierrain i, .text-heavier {
+    color: #d84544;
+}
+.time-bar-dialog > button {
+    border-radius: 6px;
+    background-color: transparent;
+    color: black;
+    border-color: rgb(209, 213, 219);
+}
+.time-bar-dialog > button:hover {
+    background-color: rgb(0 0 0 / 1%);
+}
+#btn-submit {
+    color: white;
+    background-color: rgb(21, 101, 192);
+}
+#btn-submit:has(:hover){
+    background-color: rgb(0 92 197);
+}
+.seach-provine {
+    width: 100%;
+    max-height: 80px;
+    min-width: 430px;
+}
+.search-buttom button {
+    display: flex;
+    background-color: transparent;
+    border-radius: 50%;
+    border: none;
+    aspect-ratio: 4 / 4;
+    align-items: center;
+}
+.search-buttom > div{
+    width : 100%;
+}
+.search-feild {
+    width: 100%;
+}
+.search-feild input {
+    width : 100%;
+}
+.dialog-data-rain {
+    width: 90%;
+}
+.time-bar-dialog {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin : 22px 0px;
+}
+.p-dropdown-panel ul, .p-dropdown-panel ol {
+    margin: 0px;
+    padding: 0px;
+}
+.data-rain-view {
+    width: 100%;
+    max-height: 46vh;
+}
+.data-rain-table tbody tr td {
+    white-space : nowrap;
+}
+.data-rain-chart-view{
+    margin : 30px 0px;
+}
+
+.detail-container-page {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+    background-color: #1e1e1e;
+    height: calc(100vh - 60px);
+}
+.detail-page {
+    position: relative;
+    height: calc(100vh - 75px);
+    width: 100%;
+    background-color: #434343;
+}
+.map-container-detail {
+    width: 100%;
+    height: calc(100vh - 75px);
+    margin : 10px 10px 0px 10px ;
+}
+.map-container-detail > div {
+    border-radius : 6px;
+}
+.link-vnrain{
+    margin-left: 20px;
+}
+.link-vnrain button {
+    padding: 8px 12px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    margin: 0px 10px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.link-vnrain button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #a3d4ff;
+}
+.link-vnrain button.active {
+    color: #0c386a;
+    background: #e8f2fc;
+}
+/*css cho trang chi tiết*/
+.detail-data-rain{
+    padding : 10px;
+}
+
+.p-multiselect-items {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+.email-dialog {
+    margin: 20px 0px 30px 0px;
+}
+.email-dialog input {
+    width : 100%;
+}
+.btn-group-request {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    margin: 10px 10px;
+}
+.container-report-page{
+    margin : 10px;
+}
+.container-report-page .report-pending {
+    padding: 10px;
+    color: orange;
+}
+.container-report-page .report-error {
+    color: red;
+}
+.container-report-page .download_report {
+    background-color: transparent;
+    color: #3b82f6;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+}
+.container-report-page .download_report:hover {
+    background-color: #ededed;
+}
