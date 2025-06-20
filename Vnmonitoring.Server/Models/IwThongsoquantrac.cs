@@ -33,6 +33,8 @@ public partial class IwThongsoquantrac
 
     public virtual ICollection<Hyper33Chunk> Hyper33Chunks { get; set; } = new List<Hyper33Chunk>();
 
+    public virtual ICollection<Hyper34Chunk> Hyper34Chunks { get; set; } = new List<Hyper34Chunk>();
+
     public virtual ICollection<MonitoringDatum> MonitoringData { get; set; } = new List<MonitoringDatum>();
 
     public virtual MonitoringStation? Station { get; set; }

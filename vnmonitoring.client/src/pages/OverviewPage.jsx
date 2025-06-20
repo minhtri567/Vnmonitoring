@@ -29,6 +29,8 @@ const OverviewPage = () => {
         { name: 'Ngày', code: 'day' },
         { name: 'Tháng', code: 'month' }
     ];
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
     const [showSearchInput, setShowSearchInput] = useState(false);
     const [selectedViewMode, setSelectedViewMode] = useState(viewModes[0]);
     const [hiddenchart, setHiddenchart] = useState(false);
@@ -210,8 +212,43 @@ const OverviewPage = () => {
         mapRef.current = new mapboxgl.Map({
             container: mapContainerRef.current,
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [105.84, 21.03],
-            zoom: 5
+            center: [107.5, 16.5],
+            zoom: 4.5
+        });
+
+        class FitBoundsControl {
+            onAdd(map) {
+                this._map = map;
+                this._container = document.createElement('div');
+                this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+                this._button = document.createElement('button');
+                this._button.className = 'mapboxgl-ctrl-icon';
+                this._button.type = 'button';
+                this._button.title = '';
+                this._button.innerHTML = '<span class="fa-solid fa-location-arrow" style="font-size: 21px;align-items: center;display: grid;"></span>';
+                this._button.onclick = () => this.fitBounds();
+                this._container.appendChild(this._button);
+                return this._container;
+            }
+
+            onRemove() {
+                this._container.parentNode.removeChild(this._container);
+                this._map = undefined;
+            }
+
+            fitBounds() {
+                const bounds = new mapboxgl.LngLatBounds();
+                datamonitoring.forEach(station => {
+                    bounds.extend([station.lon, station.lat]);
+                });
+                this._map.fitBounds(bounds, { padding: 40, essential: true });
+            }
+        }
+        mapRef.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+        mapRef.current.addControl(new FitBoundsControl(), 'top-right');
+        mapRef.current.on('style.load', () => {
+            // Ẩn tên biển
+            mapRef.current.setLayoutProperty('water-line-label', 'visibility', 'none');
         });
 
         mapRef.current.on('load', () => {
@@ -411,6 +448,16 @@ const OverviewPage = () => {
                     mapRef.current.on('click', layerId, handleClickRainLayer);
                 });
 
+
+            const bounds = new mapboxgl.LngLatBounds();
+            datamonitoring.forEach(station => {
+                bounds.extend([station.lon, station.lat]);
+            });
+            mapRef.current.fitBounds(bounds, {
+                padding: 40,
+                duration: 1000,
+                essential: true
+            });
         });
 
         return () => {
@@ -449,6 +496,23 @@ const OverviewPage = () => {
             }
         }
     }, [datatablerain, selectedStations]);
+
+    const removeDiacritics = (str) => {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    };
+    useEffect(() => {
+        if (!searchTerm) {
+            setFilteredData(datamonitoring);
+        } else {
+            const term = removeDiacritics(searchTerm);
+            const filtered = datamonitoring.filter(item =>
+                removeDiacritics(item.station_name || '').includes(term) ||
+                removeDiacritics(item.xa || '').includes(term)
+            );
+            setFilteredData(filtered);
+        }
+    }, [searchTerm, datamonitoring]);
+
     return (
         <div>
             <Dialog className="dialog-data-rain" maximizable header={`Dữ liệu các trạm đo mưa tại tỉnh ${province == null ? "" : province.tenTinh}`} visible={visibledata} onHide={() => { if (!visibledata) return; setVisibledata(false); }}>
@@ -536,9 +600,11 @@ const OverviewPage = () => {
                                         <IconField className="search-feild" iconPosition="left">
                                             <InputIcon className="pi pi-search" />
                                             <InputText
-                                                placeholder="Search"
+                                                placeholder="Tìm theo tên trạm,xã"
                                                 ref={inputRef}
                                                 onBlur={handleBlur}
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
                                             />
                                         </IconField>
                                     </div>
@@ -547,7 +613,7 @@ const OverviewPage = () => {
                         </div>
                     </div>
                     <div className="list-item-monitoring">
-                        <DataView value={datamonitoring} itemTemplate={itemsmonitoringTemplate} />
+                        <DataView value={filteredData} itemTemplate={itemsmonitoringTemplate} />
                     </div>
                 </div>
                 <div className="map-container-detail">

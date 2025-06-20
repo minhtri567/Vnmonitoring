@@ -139,7 +139,7 @@ export default function ChucNangPage() {
                 <Column header="Thao tác" body={actionBodyTemplate} style={{ width: '150px' }} />
             </DataTable>
 
-            <Dialog header={isEdit ? "Sửa chức năng" : "Thêm chức năng"} visible={visible} style={{ width: '400px' }} modal onHide={hideDialog}>
+            <Dialog header={isEdit ? "Sửa chức năng" : "Thêm chức năng"} visible={visible} style={{ width: '50%' }} modal onHide={hideDialog}>
                 <div className="field mb-3">
                     <label htmlFor="fnTen" className="form-label">Tên chức năng</label>
                     <InputText id="fnTen" className="form-control"

@@ -47,7 +47,9 @@ export default function AdminLayout() {
     const handleHomeRedirect = () => {
         navigate('/');
     };
-
+    const handleadminRedirect = () => {
+        navigate('/admin');
+    };
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -55,7 +57,7 @@ export default function AdminLayout() {
                     <button className="btn btn-dark me-2" onClick={toggleSidebar}>
                         <i className="fas fa-bars"></i> {/* Font Awesome icon */}
                     </button>
-                    <span className="navbar-brand">Admin Dashboard</span>
+                    <span className="navbar-brand" onClick={() => handleadminRedirect() }>Admin Dashboard</span>
                     <div className="d-flex align-items-center ms-auto">
                         <button
                             className="btn btn-outline-secondary me-2"

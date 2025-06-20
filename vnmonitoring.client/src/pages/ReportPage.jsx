@@ -187,11 +187,15 @@ const ReportPage = () => {
                 return null;
         }
     };
+    const resettable = () => {
+        fetchData();
+    };
     return (
         <div className="container-report-page">
             <Toast ref={toast} />
             <div className="btn-group-request">
-                <Button onClick={() => { popupdialog();} } label="Yêu cầu" />
+                <Button className="btn-group-request-reset" onClick={() => { resettable(); }} label="Cập nhật" />
+                <Button className="btn-group-request-request" onClick={() => { popupdialog(); }} label="Yêu cầu" />
               </div>
               <div className="card">
                   <DataTable value={datareport} tableStyle={{ minWidth: '50rem' }}>

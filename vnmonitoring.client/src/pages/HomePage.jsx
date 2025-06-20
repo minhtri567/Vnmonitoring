@@ -34,7 +34,8 @@ const HomePage = () => {
         { name: 'Ngày', code: 'day' },
         { name: 'Tháng', code: 'month' }
     ];
-
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
     const [selectedKeys, setSelectedKeys] = useState({});
     const [selectedViewMode, setSelectedViewMode] = useState(viewModes[0]);
     const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -72,7 +73,6 @@ const HomePage = () => {
     };
     const { data: datatablerain } = useFetchList('api/Home/data-rain-province-newest', querytime, '');
     useEffect(() => {
-        console.log(selectedProvince);
         if (selectedProvince != null) {
             setQuerytime({
                 type: 'RAIN',
@@ -277,6 +277,22 @@ const HomePage = () => {
         traverse(nodes);
         return result;
     };
+    const removeDiacritics = (str) => {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    };
+
+    useEffect(() => {
+        if (!searchTerm) {
+            setFilteredData(datamonitoring.data);
+        } else {
+            const term = removeDiacritics(searchTerm);
+            const filtered = datamonitoring.data.filter(item =>
+                removeDiacritics(item.tenTinh || '').includes(term) ||
+                removeDiacritics(item.stationName || '').includes(term)
+            );
+            setFilteredData(filtered);
+        }
+    }, [searchTerm, datamonitoring]);
 
     useEffect(() => {
         if (!apimapbox || datastationrain.length === 0 || layers.length === 0 || loadingKeys || loadingLayers || loadingSources) return;
@@ -284,9 +300,45 @@ const HomePage = () => {
         mapRef.current = new mapboxgl.Map({
             container: mapContainerRef.current,
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [105.84, 21.03],
-            zoom: 5
+            center: [107.5, 16.5],
+            zoom: 4.5
         });
+
+        class FitBoundsControl {
+            onAdd(map) {
+                this._map = map;
+                this._container = document.createElement('div');
+                this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+                this._button = document.createElement('button');
+                this._button.className = 'mapboxgl-ctrl-icon';
+                this._button.type = 'button';
+                this._button.title = '';
+                this._button.innerHTML = '<span class="fa-solid fa-location-arrow" style="font-size: 21px;align-items: center;display: grid;"></span>';
+                this._button.onclick = () => this.fitBounds();
+                this._container.appendChild(this._button);
+                return this._container;
+            }
+
+            onRemove() {
+                this._container.parentNode.removeChild(this._container);
+                this._map = undefined;
+            }
+
+            fitBounds() {
+                const bounds = new mapboxgl.LngLatBounds();
+                datastationrain.forEach(station => {
+                    bounds.extend([station.lon, station.lat]);
+                });
+                this._map.fitBounds(bounds, { padding: 40 , essential: true });
+            }
+        }
+        mapRef.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+        mapRef.current.addControl(new FitBoundsControl(), 'top-right');
+        mapRef.current.on('style.load', () => {
+            // Ẩn tên biển
+            mapRef.current.setLayoutProperty('water-line-label', 'visibility', 'none');
+        });
+
 
         mapRef.current.on('load', () => {
             const icons = [
@@ -469,7 +521,6 @@ const HomePage = () => {
 
             const handleClickRainLayer = (e) => {
                 const infor = e.features[0].properties;
-                console.log(infor)
                 setVisibledata(true);
                 setSelectedProvinceName(infor.tinh);
                 setSelectedProvince(infor.tinhid);
@@ -533,6 +584,8 @@ const HomePage = () => {
     const handleBlur = () => {
         setShowSearchInput(false);
     };
+
+
 
     return (
         <div>
@@ -621,9 +674,11 @@ const HomePage = () => {
                                     <IconField className="search-feild" iconPosition="left">
                                         <InputIcon className="pi pi-search" />
                                         <InputText
-                                            placeholder="Search"
+                                            placeholder="Tìm theo tên tỉnh, tên trạm"
                                             ref={inputRef}
                                             onBlur={handleBlur}
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
                                         />
                                     </IconField>
                                 </div>
@@ -632,12 +687,12 @@ const HomePage = () => {
                     </div>
                 </div>
                 <div className="list-item-monitoring">
-                    <DataView value={datamonitoring.data} itemTemplate={itemsmonitoringTemplate} />
+                    <DataView value={filteredData} itemTemplate={itemsmonitoringTemplate} />
                 </div>
             </div>
             <nav className="navbar navbar-expand-lg map-navbar">
                 <div className="container-fluid">
-                    <div className="d-flex align-items-center ms-auto">
+                    <div className="home-nav-page">
                         {user?.role && (
                             <button
                                 className="btn btn-outline-secondary me-2"

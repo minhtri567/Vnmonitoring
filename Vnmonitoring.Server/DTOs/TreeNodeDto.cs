@@ -1,4 +1,6 @@
-﻿namespace Vnmonitoring.Server.Models
+﻿using Vnmonitoring.Server.Models;
+
+namespace Vnmonitoring.Server.DTOs
 {
     public class TreeNodeDto
     {

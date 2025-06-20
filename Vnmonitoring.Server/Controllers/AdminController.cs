@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vnmonitoring.Server.Models;
-using Vnmonitoring.Server.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Vnmonitoring.Server.DTOs;
 
 namespace Vnmonitoring.Server.Controllers
 {
@@ -446,27 +446,173 @@ namespace Vnmonitoring.Server.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
-    }
-    public class CreateWeatherReportDto
-    {
-        public string name_file { get; set; }
-        public DateTime request_time { get; set; }
-        public DateTime ngaybatdau { get; set; }
-        public DateTime ngayketthuc { get; set; }
-        public string tansuat { get; set; }
-        public string rp_type { get; set; }
-        public string email { get; set; }
-        public int trangthai { get; set; }
-        public int cq_id { get; set; }
-        public Guid created_by { get; set; }
-        public bool is_public { get; set; }
-        public List<StationDto> stations { get; set; }
-    }
+        [HttpGet("all-user")]
+        public async Task<ActionResult<IEnumerable<SysMember>>> GetSysMembers()
+        {
+            return await _context.SysMembers
+                .ToListAsync();
+        }
 
-    public class StationDto
-    {
-        public int provine_id { get; set; }
-        public string station_id { get; set; }
+        // GET: api/SysMember/{id}
+        [HttpGet("get-user/{id}")]
+        public async Task<ActionResult<SysMember>> GetSysMember(Guid id)
+        {
+            var sysMember = await _context.SysMembers
+                .FirstOrDefaultAsync(m => m.MemId == id);
+
+            if (sysMember == null)
+            {
+                return NotFound();
+            }
+
+            return sysMember;
+        }
+
+        // POST: api/SysMember
+        [HttpPost("create-user")]
+        public async Task<ActionResult<SysMember>> CreateSysMember(SysMember member)
+        {
+            member.MemId = Guid.NewGuid();
+
+            if (!string.IsNullOrWhiteSpace(member.MemPassword))
+            {
+                var hasher = new PasswordHasher<SysMember>();
+                member.MemPassword = hasher.HashPassword(member, member.MemPassword);
+            }
+            member.MemCreateAt = DateTime.Now;
+
+            _context.SysMembers.Add(member);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetSysMember), new { id = member.MemId }, member);
+        }
+
+        // PUT: api/SysMember/{id}
+        [HttpPut("update-user/{id}")]
+        public async Task<IActionResult> UpdateSysMember(Guid id, SysMember member)
+        {
+            if (id != member.MemId)
+            {
+                return BadRequest();
+            }
+
+            // Lấy bản ghi cũ
+            var existingMember = await _context.SysMembers.FindAsync(id);
+            if (existingMember == null)
+                return NotFound();
+
+            // Cập nhật các trường
+            existingMember.MemUsername = member.MemUsername;
+            existingMember.MemHoten = member.MemHoten;
+            existingMember.MemEmail = member.MemEmail;
+            existingMember.MemActive = member.MemActive;
+            existingMember.MemCqId = member.MemCqId;
+            existingMember.MemUpdateAt = DateTime.Now;
+
+            if (!string.IsNullOrWhiteSpace(member.MemPassword))
+            {
+                var hasher = new PasswordHasher<SysMember>();
+                existingMember.MemPassword = hasher.HashPassword(existingMember, member.MemPassword);
+            }
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("delete-user/{id}")]
+        public async Task<IActionResult> DeleteSysMember(Guid id)
+        {
+            var member = await _context.SysMembers.FindAsync(id);
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+            member.MemActive = false;
+
+            _context.SysMembers.Update(member);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+        [HttpGet("shortallroles")]
+        public async Task<ActionResult<IEnumerable<SysRole>>> GetshortAllRoles()
+        {
+            var data = await _context.SysRoles
+                .Select(s => new
+                {
+                    s.RoleTen,
+                    s.RoleId,
+                    s.RoleStt,
+                })
+                .OrderBy(r => r.RoleStt)
+                .ToListAsync();
+            return Ok(data);
+        }
+        [HttpGet("allroles")]
+        public async Task<ActionResult<IEnumerable<SysRole>>> GetAllRoles()
+        {
+            return await _context.SysRoles
+                .OrderBy(r => r.RoleStt)
+                .ToListAsync();
+        }
+        [HttpPost("addrole")]
+        public async Task<ActionResult<SysRole>> AddRole(SysRole role)
+        {
+            _context.SysRoles.Add(role);
+            await _context.SaveChangesAsync();
+            return Ok(role);
+        }
+        [HttpPut("updaterole/{id}")]
+        public async Task<IActionResult> UpdateRole(long id, SysRole role)
+        {
+            if (id != role.RoleId)
+                return BadRequest();
+
+            var existing = await _context.SysRoles.FindAsync(id);
+            if (existing == null) return NotFound();
+
+            existing.RoleTen = role.RoleTen;
+            existing.RoleStt = role.RoleStt;
+            existing.RoleMa = role.RoleMa;
+            existing.RoleType = role.RoleType;
+            existing.RoleNguoitao = role.RoleNguoitao;
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+        [HttpDelete("deleterole/{id}")]
+        public async Task<IActionResult> DeleteRole(long id)
+        {
+            var role = await _context.SysRoles.FindAsync(id);
+            if (role == null) return NotFound();
+
+            _context.SysRoles.Remove(role);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+        [HttpGet("shortallcoquan")]
+        public async Task<ActionResult<IEnumerable<SysCoquan>>> GetshortAllCoquan()
+        {
+            var data = await _context.SysCoquans
+                .Select(s => new
+                {
+                    s.CqId,
+                    s.CqTen,
+                    s.CqStt,
+                })
+                .OrderBy(r => r.CqStt)
+                .ToListAsync();
+            return Ok(data);
+        }
+        [HttpGet("allcoquan")]
+        public async Task<ActionResult<IEnumerable<SysCoquan>>> GetAllCoquan()
+        {
+            return await _context.SysCoquans
+                .OrderBy(r => r.CqStt)
+                .ToListAsync();
+        }
+
     }
 
 }

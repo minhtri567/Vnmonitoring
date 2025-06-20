@@ -254,9 +254,9 @@ const BanDoPage = () => {
         }
     };
     return (
-        <div className="d-grid p-4 gap-4">
+        <div className="p-4 gap-4">
             <Toast ref={toast} />
-            <div className="col-12 md:col-6">
+            <div className="mt-4">
                 <div className="d-flex justify-content-between items-center mb-2">
                     <h2 className="text-xl font-bold">Mapbox API Keys</h2>
                     <Button label="Thêm" onClick={() => {
@@ -278,7 +278,7 @@ const BanDoPage = () => {
                 </DataTable>
             </div>
 
-            <div className="col-12 md:col-6">
+            <div className="mt-4">
                 <div className="d-flex justify-content-between items-center mb-2">
                     <h2 className="text-xl font-bold">Map Source</h2>
                     <Button label="Thêm" onClick={() => { setSourceForm(initialFormLayer), setSourceDialog(true); }} />
@@ -297,7 +297,7 @@ const BanDoPage = () => {
                 </DataTable>
             </div>
 
-            <div className="col-12 md:col-6">
+            <div className="mt-4">
                 <div className="d-flex justify-content-between align-items-center mb-2">
                     <h2 className="text-xl font-bold">Map Layers</h2>
                     <Button label="Thêm" onClick={() => { setLayerForm(initialFormLayer); setLayerDialog(true); }} />

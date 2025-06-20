@@ -29,10 +29,6 @@ public partial class SysCoquan
 
     public string? CqLoai { get; set; }
 
-    public int? Administrativelevel { get; set; }
-
-    public string? CqHuyenid { get; set; }
-
     public string? CqXaid { get; set; }
 
     public string? CqTinhid { get; set; }

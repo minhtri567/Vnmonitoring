@@ -7,16 +7,26 @@
     bottom: 0;
     left: 0;
 }
-
+.mapboxgl-ctrl-logo{
+    display : none !important;
+}
+.mapboxgl-ctrl-attrib-inner {
+    display: none !important;
+}
 #map-container {
     height: 100%;
     width: 100%;
     background-color: lightgrey;
 }
+.home-nav-page {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
 .nav-layout {
     background-color: #1565c0;
-    color : white;
-    height : 60px;
+    color: white;
+    height: 60px;
 }
 .nav-layout .name-province{
     font-size : 24px;
@@ -27,7 +37,7 @@
     position: absolute;
     z-index: 10;
     background-color: transparent;
-    right: 0;
+    right: 40px;
 }
 
 .container-data-monitoring p, .container-data-monitoring h5 {
@@ -283,6 +293,16 @@
     align-items: center;
     justify-content: end;
     margin: 10px 10px;
+    gap: 10px;
+}
+.btn-group-request button{
+    border-radius:6px;
+    padding : 8px 16px;
+}
+.btn-group-request .btn-group-request-reset{
+    background-color : transparent;
+    border-color : gray;
+    color : black;
 }
 .container-report-page{
     margin : 10px;

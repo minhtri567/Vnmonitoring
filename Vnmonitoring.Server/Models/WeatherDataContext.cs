@@ -25,6 +25,8 @@ public partial class WeatherDataContext : DbContext
 
     public virtual DbSet<Hyper33Chunk> Hyper33Chunks { get; set; }
 
+    public virtual DbSet<Hyper34Chunk> Hyper34Chunks { get; set; }
+
     public virtual DbSet<IwThongsoquantrac> IwThongsoquantracs { get; set; }
 
     public virtual DbSet<MapLayer> MapLayers { get; set; }
@@ -234,6 +236,48 @@ public partial class WeatherDataContext : DbContext
                 .HasForeignKey(d => d.TsktId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("3_6_monitoring_data_tskt_id_fkey");
+        });
+
+        modelBuilder.Entity<Hyper34Chunk>(entity =>
+        {
+            entity.HasKey(e => new { e.TsktId, e.DataThoigian }).HasName("4_7_monitoring_data_pkey");
+
+            entity.ToTable("_hyper_3_4_chunk", "_timescaledb_internal");
+
+            entity.HasIndex(e => new { e.TsktId, e.DataThoigian }, "_hyper_3_4_chunk_idx_monitoring_data_tsktid_thoigian").IsDescending(false, true);
+
+            entity.HasIndex(e => e.DataThoigian, "_hyper_3_4_chunk_monitoring_data_data_thoigian_idx").IsDescending();
+
+            entity.Property(e => e.TsktId).HasColumnName("tskt_id");
+            entity.Property(e => e.DataThoigian)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("data_thoigian");
+            entity.Property(e => e.Createby)
+                .HasMaxLength(150)
+                .HasColumnName("createby");
+            entity.Property(e => e.DataGiatriChuoi)
+                .HasMaxLength(250)
+                .HasColumnName("data_giatri_chuoi");
+            entity.Property(e => e.DataGiatriSothuc)
+                .HasDefaultValueSql("0")
+                .HasColumnName("data_giatri_sothuc");
+            entity.Property(e => e.DataId)
+                .HasDefaultValueSql("nextval('monitoring_data_data_id_seq'::regclass)")
+                .HasColumnName("data_id");
+            entity.Property(e => e.DataMaloaithongso)
+                .HasMaxLength(100)
+                .HasColumnName("data_maloaithongso");
+            entity.Property(e => e.DataThoigiancapnhat)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("data_thoigiancapnhat");
+            entity.Property(e => e.DataTonghop)
+                .HasMaxLength(250)
+                .HasColumnName("data_tonghop");
+
+            entity.HasOne(d => d.Tskt).WithMany(p => p.Hyper34Chunks)
+                .HasForeignKey(d => d.TsktId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("4_8_monitoring_data_tskt_id_fkey");
         });
 
         modelBuilder.Entity<IwThongsoquantrac>(entity =>
@@ -506,7 +550,6 @@ public partial class WeatherDataContext : DbContext
             entity.ToTable("sys_coquan");
 
             entity.Property(e => e.CqId).HasColumnName("cq_id");
-            entity.Property(e => e.Administrativelevel).HasColumnName("administrativelevel");
             entity.Property(e => e.CqActive)
                 .HasDefaultValue(true)
                 .HasColumnName("cq_active");
@@ -522,7 +565,6 @@ public partial class WeatherDataContext : DbContext
             entity.Property(e => e.CqGhichu)
                 .HasMaxLength(450)
                 .HasColumnName("cq_ghichu");
-            entity.Property(e => e.CqHuyenid).HasColumnName("cq_huyenid");
             entity.Property(e => e.CqLoai)
                 .HasMaxLength(150)
                 .HasColumnName("cq_loai");
@@ -642,26 +684,24 @@ public partial class WeatherDataContext : DbContext
                 .HasColumnName("mem_id");
             entity.Property(e => e.MemActive).HasColumnName("mem_active");
             entity.Property(e => e.MemCqId).HasColumnName("mem_cq_id");
+            entity.Property(e => e.MemCreateAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("mem_create_at");
             entity.Property(e => e.MemEmail)
                 .HasMaxLength(150)
                 .HasColumnName("mem_email");
             entity.Property(e => e.MemHoten)
                 .HasMaxLength(450)
                 .HasColumnName("mem_hoten");
-            entity.Property(e => e.MemHourdisplay)
-                .HasMaxLength(300)
-                .HasColumnName("mem_hourdisplay");
-            entity.Property(e => e.MemMinutedisplay)
-                .HasColumnType("character varying")
-                .HasColumnName("mem_minutedisplay");
-            entity.Property(e => e.MemMobile)
-                .HasMaxLength(150)
-                .HasColumnName("mem_mobile");
-            entity.Property(e => e.MemNumofdaydisplay).HasColumnName("mem_numofdaydisplay");
+            entity.Property(e => e.MemLastloginAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("mem_lastlogin_at");
             entity.Property(e => e.MemPassword)
                 .HasMaxLength(450)
                 .HasColumnName("mem_password");
-            entity.Property(e => e.MemStt).HasColumnName("mem_stt");
+            entity.Property(e => e.MemUpdateAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("mem_update_at");
             entity.Property(e => e.MemUsername)
                 .HasMaxLength(150)
                 .HasColumnName("mem_username");

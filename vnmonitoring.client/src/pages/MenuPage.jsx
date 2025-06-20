@@ -66,7 +66,6 @@ export default function MenuPage() {
     };
 
     const openEdit = (row) => {
-        console.log(row)
         setSelected({ ...row });
         setIsEdit(true);
         setVisible(true);
@@ -161,13 +160,13 @@ export default function MenuPage() {
     );
     const headerdanhmuc = (
         <div className="d-flex justify-content-between mb-2">
-            <h5>Danh sách Danh mục</h5>
+            <h5>Danh sách menu</h5>
             <Button label="Thêm mới" icon="pi pi-plus" size="small" onClick={openNew} />
         </div>
     );
     const headerphanloai = (
         <div className="d-flex justify-content-between mb-2">
-            <h5>Danh sách Phân loại</h5>
+            <h5>Danh sách hệ thống</h5>
             <Button label="Thêm mới" icon="pi pi-plus" size="small" onClick={openNewPhanloai} />
         </div>
     );
@@ -197,7 +196,7 @@ export default function MenuPage() {
             <Dialog header={isEdit ? 'Sửa danh mục' : 'Thêm danh mục'} visible={visible} style={{ width: '400px' }} modal onHide={() => setVisible(false)}>
                 <div className="mb-3">
                     <label>Tên</label>
-                    <InputText className="form-control" value={selected.dmTen} onChange={e => setSelected({ ...selected, ldmTen: e.target.value })} />
+                    <InputText className="form-control" value={selected.dmTen} onChange={e => setSelected({ ...selected, dmTen: e.target.value })} />
                 </div>
                 <div className="mb-3">
                     <label>Danh mục cha</label>
@@ -225,15 +224,15 @@ export default function MenuPage() {
                 </div>
                 <div className="mb-3">
                     <label>Mã</label>
-                    <InputText className="form-control" value={selected.dmMa} onChange={e => setSelected({ ...selected, ldmMa: e.target.value })} />
+                    <InputText className="form-control" value={selected.dmMa} onChange={e => setSelected({ ...selected, dmMa: e.target.value })} />
                 </div>
                 <div className="mb-3">
                     <label>Mô tả</label>
-                    <InputText className="form-control" value={selected.dmMota} onChange={e => setSelected({ ...selected, ldmMota: e.target.value })} />
+                    <InputText className="form-control" value={selected.dmMota} onChange={e => setSelected({ ...selected, dmMota: e.target.value })} />
                 </div>
                 <div className="mb-3">
                     <label>STT</label>
-                    <InputText className="form-control" value={selected.dmStt} onChange={e => setSelected({ ...selected, ldmStt: parseInt(e.target.value) || 1 })} />
+                    <InputText className="form-control" value={selected.dmStt} onChange={e => setSelected({ ...selected, dmStt: parseInt(e.target.value) || 1 })} />
                 </div>
                 <div className="d-flex justify-content-end">
                     <Button label="Hủy" icon="pi pi-times" className="p-button-text me-2" onClick={() => setVisible(false)} />

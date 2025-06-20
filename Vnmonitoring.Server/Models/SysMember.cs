@@ -17,17 +17,13 @@ public partial class SysMember
 
     public string? MemEmail { get; set; }
 
-    public string? MemMobile { get; set; }
-
     public bool? MemActive { get; set; }
 
-    public int? MemStt { get; set; }
+    public DateTime? MemCreateAt { get; set; }
 
-    public int? MemNumofdaydisplay { get; set; }
+    public DateTime? MemUpdateAt { get; set; }
 
-    public string? MemHourdisplay { get; set; }
-
-    public string? MemMinutedisplay { get; set; }
+    public DateTime? MemLastloginAt { get; set; }
 
     public virtual ICollection<MapLayerMemberAccess> MapLayerMemberAccesses { get; set; } = new List<MapLayerMemberAccess>();
 
