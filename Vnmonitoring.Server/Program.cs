@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -89,6 +90,8 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IPasswordHasher<SysMember>, PasswordHasher<SysMember>>();
 
 builder.Services.AddScoped<JwtService>();
 

@@ -1,4 +1,6 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
+import Helmet from '../components/Helmet';
+import Custom from '../assets/js/custom';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useNavigate } from 'react-router-dom';
@@ -334,11 +336,11 @@ const HomePage = () => {
         }
         mapRef.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
         mapRef.current.addControl(new FitBoundsControl(), 'top-right');
+        mapRef.current.addControl(new mapboxgl.GeolocateControl(), 'top-right');
         mapRef.current.on('style.load', () => {
-            // Ẩn tên biển
             mapRef.current.setLayoutProperty('water-line-label', 'visibility', 'none');
         });
-
+        
 
         mapRef.current.on('load', () => {
             const icons = [
@@ -348,7 +350,7 @@ const HomePage = () => {
                 { id: 'heavier-marker', url: '/marker_heavier.png' },
                 { id: 'empty-marker', url: '/marker_empty.png' },
             ];
-
+            Custom.addVietnamIslandsMarkers(mapRef.current);
             icons.forEach(({ id, url }) => {
                 mapRef.current.loadImage(url, (error, image) => {
                     if (error) {
@@ -539,7 +541,6 @@ const HomePage = () => {
         };
 
     }, [apimapbox, datastationrain, layers, loadingKeys, loadingLayers, loadingSources, sources]);
-
     if (loadingKeys || loadingLayers) {
         return <div className="d-flex justify-content-center align-items-center vh-100">
             <div className="spinner-border text-primary" role="status">
@@ -589,6 +590,11 @@ const HomePage = () => {
 
     return (
         <div>
+            <Helmet
+                title={`Mưa toàn nước ngày hôm nay`}
+                description={`Trang hiển thị bản đồ mưa của toàn nước trong hệ thống Vnmonitoring`}
+                keywords={`Mưa, bản đồ mưa, mưa tích lũy ,trạm đo mưa ,trạm đo mưa toàn quốc`}
+            />
             <Dialog className="dialog-data-rain" maximizable header={`Dữ liệu các trạm đo mưa tại tỉnh ${selectedProvinceName}`} visible={visibledata} onHide={() => { if (!visibledata) return; setVisibledata(false); }}>
                 <div className="time-bar-dialog">
                     <div className="">

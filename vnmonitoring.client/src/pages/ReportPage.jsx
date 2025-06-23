@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
+import Helmet from '../components/Helmet';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import useFetchList from '../hooks/useFetchList';
@@ -192,6 +193,11 @@ const ReportPage = () => {
     };
     return (
         <div className="container-report-page">
+            <Helmet
+                title={`Báo cáo mưa khu vực ${province.tenTinh}`}
+                description={`Báo cáo của khu vực ${province.tenTinh} trong hệ thống Vnmonitoring`}
+                keywords={`Mưa, trạm đo mưa , báo cáo mưa, báo cáo mưa tích lũy , file excel mưa, bác cáo mưa tỉnh ${province.tenTinh}`}
+            />
             <Toast ref={toast} />
             <div className="btn-group-request">
                 <Button className="btn-group-request-reset" onClick={() => { resettable(); }} label="Cập nhật" />

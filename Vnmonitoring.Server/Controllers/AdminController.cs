@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vnmonitoring.Server.Models;
 using Vnmonitoring.Server.DTOs;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace Vnmonitoring.Server.Controllers
 {
@@ -449,29 +450,39 @@ namespace Vnmonitoring.Server.Controllers
         [HttpGet("all-user")]
         public async Task<ActionResult<IEnumerable<SysMember>>> GetSysMembers()
         {
-            return await _context.SysMembers
+            var data =  await _context.SysMembers
+                .Select(s => new
+                {
+                    s.MemId,
+                    s.MemUsername,
+                    s.MemHoten,
+                    memCqId = s.MemCq == null ? null : new
+                    {
+                        s.MemCq.CqId,
+                        s.MemCq.CqTen,
+                    },
+                    s.MemEmail,
+                    roleIds = s.SysRoleMembers.Select(rm => new { rm.RoleId , rm.Role.RoleStt , rm.Role.RoleTen } ).ToList(),
+                    MemUpdateAt = s.MemUpdateAt.Value.ToString("HH:mm:ss dd/MM/yyy"),
+                    MemCreateAt = s.MemCreateAt.Value.ToString("HH:mm:ss dd/MM/yyy"),
+                    MemLastloginAt = s.MemLastloginAt.Value.ToString("HH:mm:ss dd/MM/yyy"),
+                    MemDeleteAt = s.MemDeleteAt.Value.ToString("HH:mm:ss dd/MM/yyy"),
+                    MemDeleteBy = s.MemDeleteBy,
+                    MemUpdateBy = s.MemUpdateBy,
+                    s.MemActive
+                })
                 .ToListAsync();
-        }
-
-        // GET: api/SysMember/{id}
-        [HttpGet("get-user/{id}")]
-        public async Task<ActionResult<SysMember>> GetSysMember(Guid id)
-        {
-            var sysMember = await _context.SysMembers
-                .FirstOrDefaultAsync(m => m.MemId == id);
-
-            if (sysMember == null)
-            {
-                return NotFound();
-            }
-
-            return sysMember;
+            return Ok(data);
         }
 
         // POST: api/SysMember
         [HttpPost("create-user")]
         public async Task<ActionResult<SysMember>> CreateSysMember(SysMember member)
         {
+            if (_context.SysMembers.Any(u => u.MemUsername == member.MemUsername))
+            {
+                return BadRequest(new { message = "Tên đăng nhập đã tồn tại cho người dùng khác." });
+            }
             member.MemId = Guid.NewGuid();
 
             if (!string.IsNullOrWhiteSpace(member.MemPassword))
@@ -480,11 +491,13 @@ namespace Vnmonitoring.Server.Controllers
                 member.MemPassword = hasher.HashPassword(member, member.MemPassword);
             }
             member.MemCreateAt = DateTime.Now;
+            member.MemUpdateAt = DateTime.Now;
+            member.MemDeleteAt = null;
 
             _context.SysMembers.Add(member);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetSysMember), new { id = member.MemId }, member);
+            return NoContent();
         }
 
         // PUT: api/SysMember/{id}
@@ -495,7 +508,10 @@ namespace Vnmonitoring.Server.Controllers
             {
                 return BadRequest();
             }
-
+            if (_context.SysMembers.Any(u => u.MemUsername == member.MemUsername && u.MemId != id))
+            {
+                return BadRequest(new { message = "Tên đăng nhập đã tồn tại cho người dùng khác." });
+            }
             // Lấy bản ghi cũ
             var existingMember = await _context.SysMembers.FindAsync(id);
             if (existingMember == null)
@@ -508,13 +524,11 @@ namespace Vnmonitoring.Server.Controllers
             existingMember.MemActive = member.MemActive;
             existingMember.MemCqId = member.MemCqId;
             existingMember.MemUpdateAt = DateTime.Now;
-
-            if (!string.IsNullOrWhiteSpace(member.MemPassword))
+            existingMember.MemUpdateBy = User?.Identity?.Name ?? "unknown";
+            if (member.MemActive == true)
             {
-                var hasher = new PasswordHasher<SysMember>();
-                existingMember.MemPassword = hasher.HashPassword(existingMember, member.MemPassword);
+                existingMember.MemDeleteAt = null;
             }
-
             await _context.SaveChangesAsync();
             return NoContent();
         }
@@ -528,9 +542,15 @@ namespace Vnmonitoring.Server.Controllers
             {
                 return NotFound();
             }
+            if (member.MemActive == false)
+            {
+                return BadRequest(new { message = "Người dùng này đã bị xóa trước đó." });
+            }
             member.MemActive = false;
-
+            member.MemDeleteAt = DateTime.Now;
+            member.MemDeleteBy = User?.Identity?.Name ?? "unknown";
             _context.SysMembers.Update(member);
+
             await _context.SaveChangesAsync();
 
             return NoContent();

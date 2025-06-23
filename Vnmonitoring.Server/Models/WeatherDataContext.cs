@@ -63,6 +63,7 @@ public partial class WeatherDataContext : DbContext
 
     public virtual DbSet<WeatherStationsReportList> WeatherStationsReportLists { get; set; }
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -679,6 +680,8 @@ public partial class WeatherDataContext : DbContext
 
             entity.ToTable("sys_member");
 
+            entity.HasIndex(e => e.MemUsername, "unique_username").IsUnique();
+
             entity.Property(e => e.MemId)
                 .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("mem_id");
@@ -687,6 +690,12 @@ public partial class WeatherDataContext : DbContext
             entity.Property(e => e.MemCreateAt)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("mem_create_at");
+            entity.Property(e => e.MemDeleteAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("mem_delete_at");
+            entity.Property(e => e.MemDeleteBy)
+                .HasMaxLength(150)
+                .HasColumnName("mem_delete_by");
             entity.Property(e => e.MemEmail)
                 .HasMaxLength(150)
                 .HasColumnName("mem_email");
@@ -702,6 +711,9 @@ public partial class WeatherDataContext : DbContext
             entity.Property(e => e.MemUpdateAt)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("mem_update_at");
+            entity.Property(e => e.MemUpdateBy)
+                .HasMaxLength(150)
+                .HasColumnName("mem_update_by");
             entity.Property(e => e.MemUsername)
                 .HasMaxLength(150)
                 .HasColumnName("mem_username");

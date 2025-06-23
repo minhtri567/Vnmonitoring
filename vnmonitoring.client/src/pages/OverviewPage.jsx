@@ -1,5 +1,7 @@
 ﻿// pages/ProvinceDetailPage.jsx
 import React, { useEffect, useRef, useState } from 'react';
+import Helmet from '../components/Helmet';
+import Custom from '../assets/js/custom';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import useFetchList from '../hooks/useFetchList';
@@ -246,6 +248,7 @@ const OverviewPage = () => {
         }
         mapRef.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
         mapRef.current.addControl(new FitBoundsControl(), 'top-right');
+        mapRef.current.addControl(new mapboxgl.GeolocateControl(), 'top-right');
         mapRef.current.on('style.load', () => {
             // Ẩn tên biển
             mapRef.current.setLayoutProperty('water-line-label', 'visibility', 'none');
@@ -259,7 +262,7 @@ const OverviewPage = () => {
                 { id: 'heavier-marker', url: '/marker_heavier.png' },
                 { id: 'empty-marker', url: '/marker_empty.png' },
             ];
-
+            Custom.addVietnamIslandsMarkers(mapRef.current);
             icons.forEach(({ id, url }) => {
                 mapRef.current.loadImage(url, (error, image) => {
                     if (error) {
@@ -410,7 +413,6 @@ const OverviewPage = () => {
                         const infor = e.features[0].properties;
                         const tongluongmua = formatValue(infor.tongluongmua);
                         const time = infor.time;
-
                         popup.setLngLat(coordinates)
                             .setHTML(
                                 `<table class='popup-table ${className}'>
@@ -515,6 +517,11 @@ const OverviewPage = () => {
 
     return (
         <div>
+            <Helmet
+                title={`Mưa khu vực ${province.tenTinh}`}
+                description={`Trang hiển thị bản đồ mưa của khu vực ${province.tenTinh} trong hệ thống Vnmonitoring`}
+                keywords={`Mưa, trạm đo mưa , bản đồ mưa, mưa tích lũy, tỉnh ${province.tenTinh}`}
+            />
             <Dialog className="dialog-data-rain" maximizable header={`Dữ liệu các trạm đo mưa tại tỉnh ${province == null ? "" : province.tenTinh}`} visible={visibledata} onHide={() => { if (!visibledata) return; setVisibledata(false); }}>
                     <div className="time-bar-dialog">
                         <div className="">

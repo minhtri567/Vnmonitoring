@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Vnmonitoring.Server.Models;
 using Vnmonitoring.Server.Services;
-
 namespace Vnmonitoring.Server.Controllers
 {
     [ApiController]
@@ -11,10 +12,12 @@ namespace Vnmonitoring.Server.Controllers
     {
         private readonly JwtService _jwtService;
         private readonly WeatherDataContext _context;
-        public AuthController(JwtService jwtService, WeatherDataContext context)
+        private readonly IPasswordHasher<SysMember> _passwordHasher;
+        public AuthController(JwtService jwtService, WeatherDataContext context, IPasswordHasher<SysMember> passwordHasher)
         {
             _jwtService = jwtService;
             _context = context;
+            _passwordHasher = passwordHasher;
         }
 
         [AllowAnonymous]
@@ -22,10 +25,25 @@ namespace Vnmonitoring.Server.Controllers
         public IActionResult Login([FromBody] LoginRequest request)
         {
             var user = _context.SysMembers
-                .FirstOrDefault(u => u.MemUsername == request.Username && u.MemPassword == request.Password);
+                .FirstOrDefault(u => u.MemUsername == request.Username );
 
             if (user == null)
-                return Unauthorized(new { message = "Invalid username or password" });
+            {
+                return Unauthorized(new { message = "Sai tên đăng nhập" });
+            }
+            
+            if (user.MemActive == false && user.MemDeleteAt != null)
+            {
+                return Unauthorized(new { message = "Tài khoản đã bị xóa ko thể đăng nhập !" });
+            }
+            if (user.MemActive == false && user.MemDeleteAt == null)
+            {
+                return Unauthorized(new { message = "Tài khoản đã bị khóa ko thể đăng nhập !" });
+            }
+
+            var verifyResult = _passwordHasher.VerifyHashedPassword(user, user.MemPassword, request.Password);
+            if (verifyResult != PasswordVerificationResult.Success)
+                return Unauthorized(new { message = "Sai  mật khẩu." });
 
             var userRoles = _context.SysRoleMembers
                 .Where(rm => rm.MemId == user.MemId)
@@ -52,6 +70,11 @@ namespace Vnmonitoring.Server.Controllers
             var rolebool = allRoleNames.Any() ? true : false ;
 
             var token = _jwtService.GenerateToken(user.MemUsername, allRoleNames);
+
+            user.MemLastloginAt = DateTime.Now;
+            _context.SysMembers.Update(user);
+
+            _context.SaveChangesAsync();
 
             return Ok(new
             {

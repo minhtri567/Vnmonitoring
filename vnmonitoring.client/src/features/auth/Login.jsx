@@ -33,7 +33,7 @@ const Login = ({ onLoginSuccess }) => {
             onLoginSuccess(user);
         } catch (err) {
             console.log(err)
-            setError('Đăng nhập thất bại. Kiểm tra lại thông tin!');
+            setError(err.response.data.message);
         } finally {
             setLoading(false);
         }

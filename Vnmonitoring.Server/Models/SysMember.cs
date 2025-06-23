@@ -25,6 +25,12 @@ public partial class SysMember
 
     public DateTime? MemLastloginAt { get; set; }
 
+    public DateTime? MemDeleteAt { get; set; }
+
+    public string? MemDeleteBy { get; set; }
+
+    public string? MemUpdateBy { get; set; }
+
     public virtual ICollection<MapLayerMemberAccess> MapLayerMemberAccesses { get; set; } = new List<MapLayerMemberAccess>();
 
     public virtual SysCoquan? MemCq { get; set; }

@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useRef , useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
+import Helmet from '../components/Helmet';
 import useFetchList from '../hooks/useFetchList';
 import { Button } from 'primereact/button';
 import { useOutletContext } from 'react-router-dom';
@@ -105,6 +106,11 @@ const DetailPage = () => {
     };
   return (
       <div className="detail-data-rain">
+          <Helmet
+              title={`Chi tiết mưa khu vực ${province.tenTinh}`}
+              description={`Chi tiết của khu vực ${province.tenTinh} trong hệ thống Vnmonitoring`}
+              keywords={`Mưa, trạm đo mưa , chi tiết mưa, chi tiết mưa tích lũy , biểu đồ mưa mưa,bảng mưa tỉnh ${province.tenTinh}`}
+          />
           <div className="time-bar-dialog">
               <div className="">
                   <FloatLabel>

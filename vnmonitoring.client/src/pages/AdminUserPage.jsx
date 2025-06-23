@@ -9,7 +9,7 @@ import { InputSwitch } from 'primereact/inputswitch';
 import { Toast } from 'primereact/toast';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Dropdown } from 'primereact/dropdown';
-import { MultiSelect } from 'primereact/multiSelect';
+import { MultiSelect } from 'primereact/multiselect';
 const AdminUserPage = () => {
 
     const [UserList, setUserList] = useState([]);
@@ -17,45 +17,58 @@ const AdminUserPage = () => {
     const [CoquanList, setCoquanList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [visible, setVisible] = useState(false);
-    const [selectedUser, setSelectedUser] = useState({ memId: 0, memUsername: '', memEmail: '', memHoten: '', mempassword: '', mempasswordcofirm: '', memCqId: '' , memroleid:'' , memActive:true  });
+    const [selectedUser, setSelectedUser] = useState({
+        memId: null,
+        memUsername: '',
+        memEmail: '',
+        memHoten: '',
+        memPassword: '',
+        memPasswordConfirm: '',
+        memCqId: null,
+        memActive: true,
+        roleIds: []
+    });
     const [isEdit, setIsEdit] = useState(false);
     const toast = React.useRef(null);
 
     useEffect(() => {
         loadData();
+        loadDatauser();
     }, []);
 
     const loadData = async () => {
         setLoading(true);
-        const res = await api.get('/api/Admin/all-user');
-        if (res.data) {
-            console.log(res.data);
+        const [resRoles, resCoquan] = await Promise.all([
+            api.get('/api/Admin/shortallroles'),
+            api.get('/api/Admin/shortallcoquan')
+        ]);
+        setRoleList(resRoles.data);
+        setCoquanList(resCoquan.data);
+        setLoading(false);
+    };
+    const loadDatauser = async () => {
+        setLoading(true);
+        try {
+            const res = await api.get('/api/Admin/all-user');
             setUserList(res.data);
-            setLoading(false);
-        }
-        const datarole = await api.get('/api/Admin/shortallroles');
-        if (datarole.data) {
-            setRoleList(datarole.data);
-            console.log(datarole.data);
-            setLoading(false);
-        }
-
-        const datacq = await api.get('/api/Admin/shortallcoquan');
-        if (datacq.data) {
-            setCoquanList(datacq.data);
-            console.log(datacq.data);
+        } catch (error) {
+            console.error("Lỗi khi load danh sách người dùng:", error);
+        } finally {
             setLoading(false);
         }
     };
 
     const openNew = () => {
         setSelectedUser({
-            memId: 0,
+            memId: null,
             memUsername: '',
             memEmail: '',
             memHoten: '',
-            memCqId: '',
+            memPassword: '',
+            memPasswordConfirm: '',
+            memCqId: null,
             memActive: true,
+            roleIds: []
         });
         setIsEdit(false);
         setVisible(true);
@@ -72,25 +85,38 @@ const AdminUserPage = () => {
     };
 
     const saveFunc = async () => {
-        const method = isEdit ? 'PUT' : 'POST';
-        const url = isEdit ? `/api/Admin/update-user/${selectedUser.fnId}` : '/api/Admin/create-user';
-
-        try {
-            const response = await api({
-                method,
-                url,
-                data: selectedUser,
-            });
-            console.log(response);
-            toast.current.show({ severity: 'success', summary: 'Thành công', detail: 'Đã lưu', life: 3000 });
-            setVisible(false);
-            loadData();
-        } catch (error) {
-            toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Không thể lưu', life: 3000 });
+        const url = isEdit
+            ? `/api/Admin/update-user/${selectedUser.memId}`
+            : '/api/Admin/create-user';
+        if (selectedUser.memPassword != selectedUser.memPasswordConfirm && isEdit == false) {
+            toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Mật khẩu ko trùng' });
+            return;
         }
-
+        const payload = {
+            memUsername: selectedUser.memUsername,
+            memPassword: isEdit ? "" : selectedUser.memPassword ,
+            memHoten: selectedUser.memHoten,
+            memEmail: selectedUser.memEmail,
+            memCqId: selectedUser.memCqId?.cqId || null, 
+            memActive: selectedUser.memActive,
+            roleIds: selectedUser.roleIds ? selectedUser.roleIds.map(r => r.roleId) : "",
+        };
+        if (isEdit) {
+            payload.memId = selectedUser.memId;
+        }
+        try {
+            if (isEdit) {
+                await api.put(url, payload);
+            } else {
+                await api.post(url, payload);
+            }
+            toast.current.show({ severity: 'success', summary: 'Thành công', detail: isEdit ? "Đã chỉnh sửa người dùng" : 'Đã lưu người dùng' });
+            setVisible(false);
+            loadDatauser();
+        } catch (err) {
+            toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Không thể lưu' });
+        }
     };
-
     const confirmDelete = (data) => {
         confirmDialog({
             message: 'Bạn có chắc muốn xóa người dùng này?',
@@ -101,20 +127,26 @@ const AdminUserPage = () => {
     };
 
     const deleteFunc = (user) => {
-        api.delete(`/api/Admin/delete-user/${user.Id}`)
+        api.delete(`/api/Admin/delete-user/${user.memId}`)
             .then(() => {
                 toast.current.show({ severity: 'success', summary: 'Xóa thành công', detail: '', life: 3000 });
-                loadData();
+                loadDatauser();
             })
-            .catch(() => {
-                toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Không thể xóa', life: 3000 });
+            .catch((err) => {
+                const errorMessage = err.response?.data?.message || 'Không thể xóa người dùng';
+                toast.current.show({ severity: 'error', summary: 'Lỗi', detail: errorMessage, life: 3000 });
             });
     };
 
     const activeTemplate = (rowData) => (
         rowData.memActive ? <i className="pi pi-check text-success" /> : <i className="pi pi-times text-danger" />
     );
-
+    const timedeleteTemplate = (rowData) => (
+        rowData.memDeleteAt ? <span>{rowData.memDeleteAt}</span> : <span>Chưa xóa</span>
+    );
+    const timeupdateTemplate = (rowData) => (
+        rowData.memUpdateAt ? <span>{rowData.memUpdateAt}</span> : <span>Chưa sửa</span>
+    );
     const actionBodyTemplate = (rowData) => {
         return (
             <>
@@ -133,13 +165,18 @@ const AdminUserPage = () => {
               <Button label="Thêm mới" icon="pi pi-plus" className="p-button-success" onClick={openNew} />
           </div>
 
-          <DataTable value={UserList} loading={loading} paginator rows={10} stripedRows responsiveLayout="scroll">
-              <Column field="memId" header="ID" />
+          <DataTable className="admin-user-table" scrollable value={UserList} loading={loading} paginator rows={10} stripedRows responsiveLayout="scroll">
               <Column field="memUsername" header="Tên tài khoản" />
               <Column field="memHoten" header="Tên đầy đủ" />
+              <Column field="memCreateAt" header="Tạo lúc" />
+              <Column header="Chỉnh sửa cuối lúc" body={timeupdateTemplate} />
+              <Column field="memUpdateBy" header="Sửa bởi" />
+              <Column field="memLastloginAt" header="Lần đăng nhập cuối lúc" />
+              <Column header="Xóa lúc" body={timedeleteTemplate} />
+              <Column field="memDeleteBy" header="Xóa bởi" />
               <Column field="memEmail" header="Email" />
               <Column header="Kích hoạt" body={activeTemplate} />
-              <Column header="Thao tác" body={actionBodyTemplate} style={{ width: '150px' }} />
+              <Column frozen alignFrozen="right" header="Thao tác" body={actionBodyTemplate}  />
           </DataTable>
 
           <Dialog header={isEdit ? "Sửa người dùng" : "Thêm người dùng"} visible={visible} style={{ width: '50%' }} modal onHide={hideDialog}>
@@ -158,24 +195,32 @@ const AdminUserPage = () => {
                       onChange={(e) => setSelectedUser({ ...selectedUser, memHoten: e.target.value })}
                   />
               </div>
-              <div className="field mb-3">
-                  <label htmlFor="mempassword" className="form-label">Mật khẩu mới</label>
-                  <InputText id="mempassword" className="form-control"
-                      value={selectedUser.mempassword}
-                      onChange={(e) => setSelectedUser({ ...selectedUser, mempassword: e.target.value })}
-                  />
-              </div>
-              <div className="field mb-3">
-                  <label htmlFor="mempasswordcofirm" className="form-label">Nhập mật khẩu mới</label>
-                  <InputText id="mempasswordcofirm" className="form-control"
-                      value={selectedUser.mempasswordcofirm}
-                      onChange={(e) => setSelectedUser({ ...selectedUser, mempasswordcofirm: e.target.value })}
-                  />
-              </div>
+              {!isEdit && (
+                  <>
+                      <div className="field mb-3">
+                          <label htmlFor="mempassword" className="form-label">Mật khẩu mới</label>
+                          <InputText id="mempassword" className="form-control"
+                              type="password"
+                              value={selectedUser.memPassword || ''}
+                              onChange={(e) => setSelectedUser({ ...selectedUser, memPassword: e.target.value })}
+                          />
+                      </div>
+                      <div className="field mb-3">
+                          <label htmlFor="mempasswordcofirm" className="form-label">Nhập mật khẩu mới</label>
+                          <InputText id="mempasswordcofirm" className="form-control"
+                              type="password"
+                              value={selectedUser.memPasswordConfirm || ''}
+                              onChange={(e) => setSelectedUser({ ...selectedUser, memPasswordConfirm: e.target.value })}
+                          />
+                      </div>
+                  </>
+              )}
+
 
               <div className="field mb-3">
                   <label htmlFor="memEmail" className="form-label">Nhập email</label>
                   <InputText id="memEmail" className="form-control"
+                      type="email"
                       value={selectedUser.memEmail}
                       onChange={(e) => setSelectedUser({ ...selectedUser, memEmail: e.target.value })}
                   />
@@ -199,11 +244,11 @@ const AdminUserPage = () => {
                       filter />
               </div>
               <div className="field mb-3">
-                  <label htmlFor="dd-memroleid">Chọn trạm đo</label>
+                  <label htmlFor="dd-memroleid">Chọn quyền</label>
                   <br></br>
 
-                    <MultiSelect value={selectedUser.memroleid}
-                        onChange={(e) => setSelectedUser({ ...selectedUser, memroleid: e.value })}
+                    <MultiSelect value={selectedUser.roleIds}
+                      onChange={(e) => setSelectedUser({ ...selectedUser, roleIds: e.value })}
                         options={RoleList}
                         name="roleTen"
                         inputId="dd-memroleid"

@@ -17,9 +17,9 @@ namespace Vnmonitoring.Server.Services
         public string GenerateToken(string username, IEnumerable<string> roles)
         {
             var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.Name, username ?? "")
-    };
+            {
+                new Claim(ClaimTypes.Name, username ?? "")
+            };
 
             // Thêm từng role vào danh sách claims
             foreach (var role in roles)
