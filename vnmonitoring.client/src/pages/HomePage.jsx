@@ -36,6 +36,8 @@ const HomePage = () => {
         { name: 'Ngày', code: 'day' },
         { name: 'Tháng', code: 'month' }
     ];
+    const [visibledatalist, setVisibledatalist] = useState(false);
+
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredData, setFilteredData] = useState([]);
     const [selectedKeys, setSelectedKeys] = useState({});
@@ -295,6 +297,28 @@ const HomePage = () => {
             setFilteredData(filtered);
         }
     }, [searchTerm, datamonitoring]);
+    useEffect(() => {
+        const element = document.querySelector(".container-data-monitoring");
+        if (!element) {
+            return;
+        }
+        if (visibledatalist) {
+            element.classList.add("offcanvas-bottom-full");
+            element.classList.remove("offcanvas-hidden");
+            setTimeout(() => {
+                element.classList.remove("d-block");
+                element.classList.add("d-none");
+            }, 400);
+        } else {
+            element.classList.remove("d-none");
+            setTimeout(() => {
+                element.classList.remove("offcanvas-bottom-full");
+                element.classList.add("offcanvas-hidden");
+            }, 1);
+        }
+    }, [visibledatalist]);
+
+
 
     useEffect(() => {
         if (!apimapbox || datastationrain.length === 0 || layers.length === 0 || loadingKeys || loadingLayers || loadingSources) return;
@@ -587,7 +611,6 @@ const HomePage = () => {
     };
 
 
-
     return (
         <div>
             <Helmet
@@ -663,7 +686,17 @@ const HomePage = () => {
                     />
                 </div>
             </Dialog>
-            <div className="container-data-monitoring">
+            <div className="container-btn-spring-up" onClick={() => setVisibledatalist(false)} >
+                <button >
+                    <i className="fa-solid fa-chevron-up"></i>
+                </button>
+            </div>
+            <div className={`container-data-monitoring`}>
+                <div className="container-btn-spring-down" onClick={() => setVisibledatalist(true)} >
+                    <button >
+                        <i className="fa-solid fa-chevron-down"></i>
+                    </button>
+                </div>
                 <div className="liststation click-view-provine">
                     <h3 style={{ margin: "0px", padding: "1rem", borderBottom: "1px solid rgba(255, 255, 255, .12)" }}>Danh sách các trạm theo tỉnh</h3>
                     <div className="seach-provine">
