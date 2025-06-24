@@ -18,6 +18,19 @@ services:
     depends_on:
       - api
       
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    restart: always
+    environment:
+      POSTGRES_DB: data_monitoring
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
       
 volumes:
   pgdata:

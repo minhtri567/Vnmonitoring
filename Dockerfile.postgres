@@ -1,0 +1,8 @@
+FROM timescale/timescaledb:2.14.2-pg15
+
+ENV POSTGRES_DB=data_monitoring
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=12345678
+
+# Copy file .sql để restore
+COPY ./init-data /docker-entrypoint-initdb.d/
