@@ -54,7 +54,7 @@ export default defineConfig(({ command, mode }) => {
                 '@': fileURLToPath(new URL('./src', import.meta.url))
             }
         },
-        base: isDev ? '/' : '/vnmonitoring/', // production sẽ chạy dưới thư mục /vnmonitoring/
+        base: isDev ? '/' : '/', // production sẽ chạy dưới thư mục /
         server: isDev
             ? {
                 port: parseInt(env.DEV_SERVER_PORT || '49863'),
