@@ -4,7 +4,7 @@ services:
     build:
       context: ./Vnmonitoring.Server
     ports:
-      - "5000:80"
+      - "7101:80"
 
   client:
     build:
@@ -13,6 +13,11 @@ services:
         IS_DOCKER: "true"
     environment:
       - IS_DOCKER=true
-
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+      
+      
 volumes:
   pgdata:
