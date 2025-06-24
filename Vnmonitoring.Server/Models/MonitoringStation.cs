@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using NetTopologySuite.Geometries;
 
 namespace Vnmonitoring.Server.Models;
 
@@ -23,8 +22,6 @@ public partial class MonitoringStation
     public string? Description { get; set; }
 
     public string? InforData { get; set; }
-
-    public Point? Geom3857 { get; set; }
 
     public virtual BgmapCommune? Commune { get; set; }
 
