@@ -47,6 +47,7 @@ export default defineConfig(({ command, mode }) => {
             ? env.ASPNETCORE_URLS.split(';')[0]
             : API_URL;
 
+    console.log(env.ASPNETCORE_HTTPS_PORT)
     return {
         plugins: [plugin()],
         resolve: {

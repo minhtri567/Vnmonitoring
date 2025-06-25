@@ -17,16 +17,17 @@ public class RainDataHostedService : BackgroundService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var now = DateTime.Now;
-                var nextHour = now.AddHours(1).Date.AddHours(now.AddHours(1).Hour);
-                var delay = nextHour - now;
-                _logger.LogInformation("Đợi đến giờ tiếp theo: {NextHour}, chờ {Delay}", nextHour, delay);
-                await Task.Delay(delay, stoppingToken);
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var rainService = scope.ServiceProvider.GetRequiredService<IRainDataService>();
                     await rainService.FetchAndStoreRainDataAsync();
                 }
+                var now = DateTime.Now;
+                var nextHour = now.AddHours(1).Date.AddHours(now.AddHours(1).Hour);
+                var delay = nextHour - now;
+                _logger.LogInformation("Đợi đến giờ tiếp theo: {NextHour}, chờ {Delay}", nextHour, delay);
+                await Task.Delay(delay, stoppingToken);
+                
             }
         }
         catch (Exception ex)

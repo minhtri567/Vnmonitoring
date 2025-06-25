@@ -55,9 +55,6 @@ public partial class WeatherDataContext : DbContext
 
     public virtual DbSet<WeatherStationsReportList> WeatherStationsReportLists { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Name=DefaultConnection", x => x.UseNetTopologySuite());
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
