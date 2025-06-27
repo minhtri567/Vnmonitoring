@@ -5,10 +5,12 @@
 -- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.4
 
--- Started on 2025-06-24 17:21:59
+-- Started on 2025-06-26 21:50:35
 
+SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -17,115 +19,9 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- TOC entry 2 (class 3079 OID 18859)
--- Name: timescaledb; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS timescaledb WITH SCHEMA public;
-
-
---
--- TOC entry 5672 (class 0 OID 0)
--- Dependencies: 2
--- Name: EXTENSION timescaledb; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION timescaledb IS 'Enables scalable inserts and complex queries for time-series data (Community Edition)';
-
-
---
--- TOC entry 3 (class 3079 OID 19750)
--- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
-
-
---
--- TOC entry 5673 (class 0 OID 0)
--- Dependencies: 3
--- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
-
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
-
---
--- TOC entry 287 (class 1259 OID 20306)
--- Name: monitoring_data; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.monitoring_data (
-    data_id integer NOT NULL,
-    tskt_id integer NOT NULL,
-    data_thoigian timestamp without time zone NOT NULL,
-    data_thoigiancapnhat timestamp without time zone,
-    data_giatri_sothuc real DEFAULT 0,
-    data_giatri_chuoi character varying(250),
-    createby character varying(150),
-    data_tonghop character varying(250),
-    data_maloaithongso character varying(100)
-);
-
-
-ALTER TABLE public.monitoring_data OWNER TO postgres;
-
---
--- TOC entry 317 (class 1259 OID 40456)
--- Name: _hyper_3_1_chunk; Type: TABLE; Schema: _timescaledb_internal; Owner: postgres
---
-
-CREATE TABLE _timescaledb_internal._hyper_3_1_chunk (
-    CONSTRAINT constraint_1 CHECK (((data_thoigian >= '2025-06-05 00:00:00'::timestamp without time zone) AND (data_thoigian < '2025-06-12 00:00:00'::timestamp without time zone)))
-)
-INHERITS (public.monitoring_data);
-
-
-ALTER TABLE _timescaledb_internal._hyper_3_1_chunk OWNER TO postgres;
-
---
--- TOC entry 318 (class 1259 OID 40478)
--- Name: _hyper_3_2_chunk; Type: TABLE; Schema: _timescaledb_internal; Owner: postgres
---
-
-CREATE TABLE _timescaledb_internal._hyper_3_2_chunk (
-    CONSTRAINT constraint_2 CHECK (((data_thoigian >= '2025-05-29 00:00:00'::timestamp without time zone) AND (data_thoigian < '2025-06-05 00:00:00'::timestamp without time zone)))
-)
-INHERITS (public.monitoring_data);
-
-
-ALTER TABLE _timescaledb_internal._hyper_3_2_chunk OWNER TO postgres;
-
---
--- TOC entry 319 (class 1259 OID 40532)
--- Name: _hyper_3_3_chunk; Type: TABLE; Schema: _timescaledb_internal; Owner: postgres
---
-
-CREATE TABLE _timescaledb_internal._hyper_3_3_chunk (
-    CONSTRAINT constraint_3 CHECK (((data_thoigian >= '2025-06-12 00:00:00'::timestamp without time zone) AND (data_thoigian < '2025-06-19 00:00:00'::timestamp without time zone)))
-)
-INHERITS (public.monitoring_data);
-
-
-ALTER TABLE _timescaledb_internal._hyper_3_3_chunk OWNER TO postgres;
-
---
--- TOC entry 322 (class 1259 OID 52725)
--- Name: _hyper_3_4_chunk; Type: TABLE; Schema: _timescaledb_internal; Owner: postgres
---
-
-CREATE TABLE _timescaledb_internal._hyper_3_4_chunk (
-    CONSTRAINT constraint_4 CHECK (((data_thoigian >= '2025-06-19 00:00:00'::timestamp without time zone) AND (data_thoigian < '2025-06-26 00:00:00'::timestamp without time zone)))
-)
-INHERITS (public.monitoring_data);
-
-
-ALTER TABLE _timescaledb_internal._hyper_3_4_chunk OWNER TO postgres;
 
 --
 -- TOC entry 282 (class 1259 OID 20277)
@@ -158,7 +54,7 @@ CREATE SEQUENCE public.bgmap_commune_gid_seq
 ALTER SEQUENCE public.bgmap_commune_gid_seq OWNER TO postgres;
 
 --
--- TOC entry 5674 (class 0 OID 0)
+-- TOC entry 5464 (class 0 OID 0)
 -- Dependencies: 281
 -- Name: bgmap_commune_gid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -167,7 +63,7 @@ ALTER SEQUENCE public.bgmap_commune_gid_seq OWNED BY public.bgmap_commune.gid;
 
 
 --
--- TOC entry 320 (class 1259 OID 40600)
+-- TOC entry 317 (class 1259 OID 40600)
 -- Name: bgmap_province; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -182,7 +78,7 @@ CREATE TABLE public.bgmap_province (
 ALTER TABLE public.bgmap_province OWNER TO postgres;
 
 --
--- TOC entry 321 (class 1259 OID 40603)
+-- TOC entry 318 (class 1259 OID 40603)
 -- Name: bgmap_ogc_fid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -198,8 +94,8 @@ CREATE SEQUENCE public.bgmap_ogc_fid_seq
 ALTER SEQUENCE public.bgmap_ogc_fid_seq OWNER TO postgres;
 
 --
--- TOC entry 5675 (class 0 OID 0)
--- Dependencies: 321
+-- TOC entry 5465 (class 0 OID 0)
+-- Dependencies: 318
 -- Name: bgmap_ogc_fid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -245,7 +141,7 @@ CREATE SEQUENCE public.iw_thongsoquantrac_tskt_id_seq
 ALTER SEQUENCE public.iw_thongsoquantrac_tskt_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5676 (class 0 OID 0)
+-- TOC entry 5466 (class 0 OID 0)
 -- Dependencies: 284
 -- Name: iw_thongsoquantrac_tskt_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -284,7 +180,7 @@ CREATE SEQUENCE public.map_layer_coquan_access_id_seq
 ALTER SEQUENCE public.map_layer_coquan_access_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5677 (class 0 OID 0)
+-- TOC entry 5467 (class 0 OID 0)
 -- Dependencies: 309
 -- Name: map_layer_coquan_access_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -323,7 +219,7 @@ CREATE SEQUENCE public.map_layer_member_access_id_seq
 ALTER SEQUENCE public.map_layer_member_access_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5678 (class 0 OID 0)
+-- TOC entry 5468 (class 0 OID 0)
 -- Dependencies: 311
 -- Name: map_layer_member_access_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -375,7 +271,7 @@ CREATE SEQUENCE public.map_layers_id_seq
 ALTER SEQUENCE public.map_layers_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5679 (class 0 OID 0)
+-- TOC entry 5469 (class 0 OID 0)
 -- Dependencies: 307
 -- Name: map_layers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -420,7 +316,7 @@ CREATE SEQUENCE public.map_sources_id_seq
 ALTER SEQUENCE public.map_sources_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5680 (class 0 OID 0)
+-- TOC entry 5470 (class 0 OID 0)
 -- Dependencies: 315
 -- Name: map_sources_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -462,13 +358,33 @@ CREATE SEQUENCE public.mapbox_apikeys_id_seq
 ALTER SEQUENCE public.mapbox_apikeys_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5681 (class 0 OID 0)
+-- TOC entry 5471 (class 0 OID 0)
 -- Dependencies: 313
 -- Name: mapbox_apikeys_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.mapbox_apikeys_id_seq OWNED BY public.mapbox_apikeys.id;
 
+
+--
+-- TOC entry 287 (class 1259 OID 20306)
+-- Name: monitoring_data; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.monitoring_data (
+    data_id integer NOT NULL,
+    tskt_id integer NOT NULL,
+    data_thoigian timestamp without time zone NOT NULL,
+    data_thoigiancapnhat timestamp without time zone,
+    data_giatri_sothuc real DEFAULT 0,
+    data_giatri_chuoi character varying(250),
+    createby character varying(150),
+    data_tonghop character varying(250),
+    data_maloaithongso character varying(100)
+);
+
+
+ALTER TABLE public.monitoring_data OWNER TO postgres;
 
 --
 -- TOC entry 286 (class 1259 OID 20305)
@@ -487,13 +403,19 @@ CREATE SEQUENCE public.monitoring_data_data_id_seq
 ALTER SEQUENCE public.monitoring_data_data_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5682 (class 0 OID 0)
+-- TOC entry 5472 (class 0 OID 0)
 -- Dependencies: 286
 -- Name: monitoring_data_data_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.monitoring_data_data_id_seq OWNED BY public.monitoring_data.data_id;
 
+
+SELECT create_hypertable(
+    'public.monitoring_data', 
+    'data_thoigian',
+    if_not_exists => TRUE
+);
 
 --
 -- TOC entry 283 (class 1259 OID 20285)
@@ -557,7 +479,7 @@ CREATE SEQUENCE public.sys_coquan_cq_id_seq
 ALTER SEQUENCE public.sys_coquan_cq_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5683 (class 0 OID 0)
+-- TOC entry 5473 (class 0 OID 0)
 -- Dependencies: 290
 -- Name: sys_coquan_cq_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -602,7 +524,7 @@ CREATE SEQUENCE public.sys_danhmuc_dm_id_seq
 ALTER SEQUENCE public.sys_danhmuc_dm_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5684 (class 0 OID 0)
+-- TOC entry 5474 (class 0 OID 0)
 -- Dependencies: 299
 -- Name: sys_danhmuc_dm_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -645,7 +567,7 @@ CREATE SEQUENCE public.sys_danhmuc_phanloai_ldm_id_seq
 ALTER SEQUENCE public.sys_danhmuc_phanloai_ldm_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5685 (class 0 OID 0)
+-- TOC entry 5475 (class 0 OID 0)
 -- Dependencies: 297
 -- Name: sys_danhmuc_phanloai_ldm_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -692,7 +614,7 @@ CREATE SEQUENCE public.sys_function_fn_id_seq
 ALTER SEQUENCE public.sys_function_fn_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5686 (class 0 OID 0)
+-- TOC entry 5476 (class 0 OID 0)
 -- Dependencies: 305
 -- Name: sys_function_fn_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -772,7 +694,7 @@ CREATE SEQUENCE public.sys_role_coquan_id_seq
 ALTER SEQUENCE public.sys_role_coquan_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5687 (class 0 OID 0)
+-- TOC entry 5477 (class 0 OID 0)
 -- Dependencies: 292
 -- Name: sys_role_coquan_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -811,7 +733,7 @@ CREATE SEQUENCE public.sys_role_member_id_seq
 ALTER SEQUENCE public.sys_role_member_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5688 (class 0 OID 0)
+-- TOC entry 5478 (class 0 OID 0)
 -- Dependencies: 295
 -- Name: sys_role_member_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -835,7 +757,7 @@ CREATE SEQUENCE public.sys_role_role_id_seq
 ALTER SEQUENCE public.sys_role_role_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5689 (class 0 OID 0)
+-- TOC entry 5479 (class 0 OID 0)
 -- Dependencies: 288
 -- Name: sys_role_role_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -883,7 +805,7 @@ CREATE SEQUENCE public.weather_stations_report_id_seq
 ALTER SEQUENCE public.weather_stations_report_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5690 (class 0 OID 0)
+-- TOC entry 5480 (class 0 OID 0)
 -- Dependencies: 301
 -- Name: weather_stations_report_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -923,7 +845,7 @@ CREATE SEQUENCE public.weather_stations_report_list_id_seq
 ALTER SEQUENCE public.weather_stations_report_list_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5691 (class 0 OID 0)
+-- TOC entry 5481 (class 0 OID 0)
 -- Dependencies: 303
 -- Name: weather_stations_report_list_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -932,71 +854,7 @@ ALTER SEQUENCE public.weather_stations_report_list_id_seq OWNED BY public.weathe
 
 
 --
--- TOC entry 5275 (class 2604 OID 40459)
--- Name: _hyper_3_1_chunk data_id; Type: DEFAULT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_1_chunk ALTER COLUMN data_id SET DEFAULT nextval('public.monitoring_data_data_id_seq'::regclass);
-
-
---
--- TOC entry 5276 (class 2604 OID 40460)
--- Name: _hyper_3_1_chunk data_giatri_sothuc; Type: DEFAULT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_1_chunk ALTER COLUMN data_giatri_sothuc SET DEFAULT 0;
-
-
---
--- TOC entry 5277 (class 2604 OID 40481)
--- Name: _hyper_3_2_chunk data_id; Type: DEFAULT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_2_chunk ALTER COLUMN data_id SET DEFAULT nextval('public.monitoring_data_data_id_seq'::regclass);
-
-
---
--- TOC entry 5278 (class 2604 OID 40482)
--- Name: _hyper_3_2_chunk data_giatri_sothuc; Type: DEFAULT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_2_chunk ALTER COLUMN data_giatri_sothuc SET DEFAULT 0;
-
-
---
--- TOC entry 5279 (class 2604 OID 40535)
--- Name: _hyper_3_3_chunk data_id; Type: DEFAULT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_3_chunk ALTER COLUMN data_id SET DEFAULT nextval('public.monitoring_data_data_id_seq'::regclass);
-
-
---
--- TOC entry 5280 (class 2604 OID 40536)
--- Name: _hyper_3_3_chunk data_giatri_sothuc; Type: DEFAULT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_3_chunk ALTER COLUMN data_giatri_sothuc SET DEFAULT 0;
-
-
---
--- TOC entry 5282 (class 2604 OID 52728)
--- Name: _hyper_3_4_chunk data_id; Type: DEFAULT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_4_chunk ALTER COLUMN data_id SET DEFAULT nextval('public.monitoring_data_data_id_seq'::regclass);
-
-
---
--- TOC entry 5283 (class 2604 OID 52729)
--- Name: _hyper_3_4_chunk data_giatri_sothuc; Type: DEFAULT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_4_chunk ALTER COLUMN data_giatri_sothuc SET DEFAULT 0;
-
-
---
--- TOC entry 5246 (class 2604 OID 20280)
+-- TOC entry 5160 (class 2604 OID 52767)
 -- Name: bgmap_commune gid; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1004,7 +862,7 @@ ALTER TABLE ONLY public.bgmap_commune ALTER COLUMN gid SET DEFAULT nextval('publ
 
 
 --
--- TOC entry 5281 (class 2604 OID 40604)
+-- TOC entry 5189 (class 2604 OID 52768)
 -- Name: bgmap_province gid; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1012,7 +870,7 @@ ALTER TABLE ONLY public.bgmap_province ALTER COLUMN gid SET DEFAULT nextval('pub
 
 
 --
--- TOC entry 5248 (class 2604 OID 20299)
+-- TOC entry 5162 (class 2604 OID 52769)
 -- Name: iw_thongsoquantrac tskt_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1020,7 +878,7 @@ ALTER TABLE ONLY public.iw_thongsoquantrac ALTER COLUMN tskt_id SET DEFAULT next
 
 
 --
--- TOC entry 5268 (class 2604 OID 20424)
+-- TOC entry 5182 (class 2604 OID 52770)
 -- Name: map_layer_coquan_access id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1028,7 +886,7 @@ ALTER TABLE ONLY public.map_layer_coquan_access ALTER COLUMN id SET DEFAULT next
 
 
 --
--- TOC entry 5269 (class 2604 OID 20431)
+-- TOC entry 5183 (class 2604 OID 52771)
 -- Name: map_layer_member_access id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1036,7 +894,7 @@ ALTER TABLE ONLY public.map_layer_member_access ALTER COLUMN id SET DEFAULT next
 
 
 --
--- TOC entry 5264 (class 2604 OID 20411)
+-- TOC entry 5178 (class 2604 OID 52772)
 -- Name: map_layers id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1044,7 +902,7 @@ ALTER TABLE ONLY public.map_layers ALTER COLUMN id SET DEFAULT nextval('public.m
 
 
 --
--- TOC entry 5273 (class 2604 OID 40390)
+-- TOC entry 5187 (class 2604 OID 52773)
 -- Name: map_sources id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1052,7 +910,7 @@ ALTER TABLE ONLY public.map_sources ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- TOC entry 5270 (class 2604 OID 20438)
+-- TOC entry 5184 (class 2604 OID 52774)
 -- Name: mapbox_apikeys id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1060,7 +918,7 @@ ALTER TABLE ONLY public.mapbox_apikeys ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
--- TOC entry 5250 (class 2604 OID 20309)
+-- TOC entry 5164 (class 2604 OID 20309)
 -- Name: monitoring_data data_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1068,7 +926,7 @@ ALTER TABLE ONLY public.monitoring_data ALTER COLUMN data_id SET DEFAULT nextval
 
 
 --
--- TOC entry 5253 (class 2604 OID 20326)
+-- TOC entry 5167 (class 2604 OID 52775)
 -- Name: sys_coquan cq_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1076,7 +934,7 @@ ALTER TABLE ONLY public.sys_coquan ALTER COLUMN cq_id SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 5259 (class 2604 OID 20367)
+-- TOC entry 5173 (class 2604 OID 52776)
 -- Name: sys_danhmuc dm_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1084,7 +942,7 @@ ALTER TABLE ONLY public.sys_danhmuc ALTER COLUMN dm_id SET DEFAULT nextval('publ
 
 
 --
--- TOC entry 5258 (class 2604 OID 20358)
+-- TOC entry 5172 (class 2604 OID 52777)
 -- Name: sys_danhmuc_phanloai ldm_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1092,7 +950,7 @@ ALTER TABLE ONLY public.sys_danhmuc_phanloai ALTER COLUMN ldm_id SET DEFAULT nex
 
 
 --
--- TOC entry 5263 (class 2604 OID 20402)
+-- TOC entry 5177 (class 2604 OID 52778)
 -- Name: sys_function fn_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1100,7 +958,7 @@ ALTER TABLE ONLY public.sys_function ALTER COLUMN fn_id SET DEFAULT nextval('pub
 
 
 --
--- TOC entry 5252 (class 2604 OID 20319)
+-- TOC entry 5166 (class 2604 OID 52779)
 -- Name: sys_role role_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1108,7 +966,7 @@ ALTER TABLE ONLY public.sys_role ALTER COLUMN role_id SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 5255 (class 2604 OID 20336)
+-- TOC entry 5169 (class 2604 OID 52780)
 -- Name: sys_role_coquan id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1116,7 +974,7 @@ ALTER TABLE ONLY public.sys_role_coquan ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
--- TOC entry 5257 (class 2604 OID 20351)
+-- TOC entry 5171 (class 2604 OID 52781)
 -- Name: sys_role_member id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1124,7 +982,7 @@ ALTER TABLE ONLY public.sys_role_member ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
--- TOC entry 5260 (class 2604 OID 20376)
+-- TOC entry 5174 (class 2604 OID 52782)
 -- Name: weather_stations_report id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1132,7 +990,7 @@ ALTER TABLE ONLY public.weather_stations_report ALTER COLUMN id SET DEFAULT next
 
 
 --
--- TOC entry 5262 (class 2604 OID 20393)
+-- TOC entry 5176 (class 2604 OID 52783)
 -- Name: weather_stations_report_list id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1140,137 +998,7 @@ ALTER TABLE ONLY public.weather_stations_report_list ALTER COLUMN id SET DEFAULT
 
 
 --
--- TOC entry 5197 (class 0 OID 18881)
--- Dependencies: 228
--- Data for Name: hypertable; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
---
--- TOC entry 5203 (class 0 OID 18951)
--- Dependencies: 236
--- Data for Name: chunk; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
---
--- TOC entry 5208 (class 0 OID 19010)
--- Dependencies: 241
--- Data for Name: chunk_column_stats; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
---
--- TOC entry 5199 (class 0 OID 18917)
--- Dependencies: 232
--- Data for Name: dimension; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
-
-
---
--- TOC entry 5201 (class 0 OID 18936)
--- Dependencies: 234
--- Data for Name: dimension_slice; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5205 (class 0 OID 18976)
--- Dependencies: 237
--- Data for Name: chunk_constraint; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
---
--- TOC entry 5207 (class 0 OID 18993)
--- Dependencies: 239
--- Data for Name: chunk_index; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
---
--- TOC entry 5220 (class 0 OID 19189)
--- Dependencies: 258
--- Data for Name: compression_chunk_size; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
---
--- TOC entry 5219 (class 0 OID 19178)
--- Dependencies: 257
--- Data for Name: compression_settings; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5213 (class 0 OID 19098)
--- Dependencies: 250
--- Data for Name: continuous_agg; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5221 (class 0 OID 19205)
--- Dependencies: 259
--- Data for Name: continuous_agg_migrate_plan; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5222 (class 0 OID 19214)
--- Dependencies: 261
--- Data for Name: continuous_agg_migrate_plan_step; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
---
--- TOC entry 5214 (class 0 OID 19125)
--- Dependencies: 251
--- Data for Name: continuous_aggs_bucket_function; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5217 (class 0 OID 19158)
--- Dependencies: 254
--- Data for Name: continuous_aggs_hypertable_invalidation_log; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5215 (class 0 OID 19138)
--- Dependencies: 252
--- Data for Name: continuous_aggs_invalidation_threshold; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
---
--- TOC entry 5218 (class 0 OID 19162)
--- Dependencies: 255
--- Data for Name: continuous_aggs_materialization_invalidation_log; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
---
--- TOC entry 5216 (class 0 OID 19148)
--- Dependencies: 253
--- Data for Name: continuous_aggs_watermark; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5212 (class 0 OID 19085)
--- Dependencies: 248
--- Data for Name: metadata; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5198 (class 0 OID 18903)
--- Dependencies: 230
--- Data for Name: tablespace; Type: TABLE DATA; Schema: _timescaledb_catalog; Owner: postgres
-
---
--- TOC entry 5211 (class 0 OID 19030)
--- Dependencies: 243
--- Data for Name: bgw_job; Type: TABLE DATA; Schema: _timescaledb_config; Owner: postgres
---
---
--- TOC entry 5661 (class 0 OID 40456)
--- Dependencies: 317
--- Data for Name: _hyper_3_1_chunk; Type: TABLE DATA; Schema: _timescaledb_internal; Owner: postgres
---
---
--- TOC entry 5662 (class 0 OID 40478)
--- Dependencies: 318
--- Data for Name: _hyper_3_2_chunk; Type: TABLE DATA; Schema: _timescaledb_internal; Owner: postgres
---
---
--- TOC entry 5663 (class 0 OID 40532)
--- Dependencies: 319
--- Data for Name: _hyper_3_3_chunk; Type: TABLE DATA; Schema: _timescaledb_internal; Owner: postgres
---
---
--- TOC entry 5666 (class 0 OID 52725)
--- Dependencies: 322
--- Data for Name: _hyper_3_4_chunk; Type: TABLE DATA; Schema: _timescaledb_internal; Owner: postgres
---
---
--- TOC entry 5626 (class 0 OID 20277)
+-- TOC entry 5422 (class 0 OID 20277)
 -- Dependencies: 282
 -- Data for Name: bgmap_commune; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -12433,8 +12161,8 @@ COPY public.bgmap_commune (gid, ten_xa, tinh_id) FROM stdin;
 
 
 --
--- TOC entry 5664 (class 0 OID 40600)
--- Dependencies: 320
+-- TOC entry 5457 (class 0 OID 40600)
+-- Dependencies: 317
 -- Data for Name: bgmap_province; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -12477,7 +12205,7 @@ COPY public.bgmap_province (gid, ten_tinh, code, tinh_seo) FROM stdin;
 
 
 --
--- TOC entry 5629 (class 0 OID 20296)
+-- TOC entry 5425 (class 0 OID 20296)
 -- Dependencies: 285
 -- Data for Name: iw_thongsoquantrac; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -15766,7 +15494,7 @@ COPY public.iw_thongsoquantrac (tskt_id, tskt_ten, tskt_stt, tskt_deletedstatus,
 
 
 --
--- TOC entry 5654 (class 0 OID 20421)
+-- TOC entry 5450 (class 0 OID 20421)
 -- Dependencies: 310
 -- Data for Name: map_layer_coquan_access; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -15776,7 +15504,7 @@ COPY public.map_layer_coquan_access (id, cq_id, layer_id) FROM stdin;
 
 
 --
--- TOC entry 5656 (class 0 OID 20428)
+-- TOC entry 5452 (class 0 OID 20428)
 -- Dependencies: 312
 -- Data for Name: map_layer_member_access; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -15786,7 +15514,7 @@ COPY public.map_layer_member_access (id, mem_id, layer_id) FROM stdin;
 
 
 --
--- TOC entry 5652 (class 0 OID 20408)
+-- TOC entry 5448 (class 0 OID 20408)
 -- Dependencies: 308
 -- Data for Name: map_layers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -15803,7 +15531,7 @@ COPY public.map_layers (id, name, description, source_layer, filter, layout, vis
 
 
 --
--- TOC entry 5660 (class 0 OID 40387)
+-- TOC entry 5456 (class 0 OID 40387)
 -- Dependencies: 316
 -- Data for Name: map_sources; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -15818,7 +15546,7 @@ COPY public.map_sources (id, name, description, source_url, bounds, scheme, sour
 
 
 --
--- TOC entry 5658 (class 0 OID 20435)
+-- TOC entry 5454 (class 0 OID 20435)
 -- Dependencies: 314
 -- Data for Name: mapbox_apikeys; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -15829,7 +15557,7 @@ COPY public.mapbox_apikeys (id, key_value, description, created_by, created_at, 
 
 
 --
--- TOC entry 5631 (class 0 OID 20306)
+-- TOC entry 5427 (class 0 OID 20306)
 -- Dependencies: 287
 -- Data for Name: monitoring_data; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -15839,7 +15567,7 @@ COPY public.monitoring_data (data_id, tskt_id, data_thoigian, data_thoigiancapnh
 
 
 --
--- TOC entry 5627 (class 0 OID 20285)
+-- TOC entry 5423 (class 0 OID 20285)
 -- Dependencies: 283
 -- Data for Name: monitoring_stations; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -19128,7 +18856,7 @@ b4aef971-709f-42aa-8131-053ea4c771fc	240013	Ngũ Chỉ Sơn	11203	\N	22.332778	1
 
 
 --
--- TOC entry 5635 (class 0 OID 20323)
+-- TOC entry 5431 (class 0 OID 20323)
 -- Dependencies: 291
 -- Data for Name: sys_coquan; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -19139,7 +18867,7 @@ COPY public.sys_coquan (cq_id, cq_ten, cq_mota, cq_diachi, cq_nguoidaidien, cq_d
 
 
 --
--- TOC entry 5644 (class 0 OID 20364)
+-- TOC entry 5440 (class 0 OID 20364)
 -- Dependencies: 300
 -- Data for Name: sys_danhmuc; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -19154,7 +18882,7 @@ COPY public.sys_danhmuc (dm_id, dm_ten, dm_ldm_id, dm_ma, dm_pid, dm_stt, dm_mot
 
 
 --
--- TOC entry 5642 (class 0 OID 20355)
+-- TOC entry 5438 (class 0 OID 20355)
 -- Dependencies: 298
 -- Data for Name: sys_danhmuc_phanloai; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -19165,7 +18893,7 @@ COPY public.sys_danhmuc_phanloai (ldm_id, ldm_ten, ldm_ma, ldm_mota, ldm_pid, ld
 
 
 --
--- TOC entry 5650 (class 0 OID 20399)
+-- TOC entry 5446 (class 0 OID 20399)
 -- Dependencies: 306
 -- Data for Name: sys_function; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -19179,7 +18907,7 @@ COPY public.sys_function (fn_id, fn_thutu, fn_ten, fn_mota, fn_ma, fn_active, fn
 
 
 --
--- TOC entry 5638 (class 0 OID 20339)
+-- TOC entry 5434 (class 0 OID 20339)
 -- Dependencies: 294
 -- Data for Name: sys_member; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -19192,7 +18920,7 @@ COPY public.sys_member (mem_id, mem_username, mem_password, mem_hoten, mem_cq_id
 
 
 --
--- TOC entry 5633 (class 0 OID 20316)
+-- TOC entry 5429 (class 0 OID 20316)
 -- Dependencies: 289
 -- Data for Name: sys_role; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -19209,7 +18937,7 @@ COPY public.sys_role (role_id, role_ten, role_stt, role_nguoitao, role_ma, role_
 
 
 --
--- TOC entry 5637 (class 0 OID 20333)
+-- TOC entry 5433 (class 0 OID 20333)
 -- Dependencies: 293
 -- Data for Name: sys_role_coquan; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -19219,7 +18947,7 @@ COPY public.sys_role_coquan (id, cq_id, role_id) FROM stdin;
 
 
 --
--- TOC entry 5640 (class 0 OID 20348)
+-- TOC entry 5436 (class 0 OID 20348)
 -- Dependencies: 296
 -- Data for Name: sys_role_member; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -19231,7 +18959,7 @@ COPY public.sys_role_member (id, mem_id, role_id) FROM stdin;
 
 
 --
--- TOC entry 5646 (class 0 OID 20373)
+-- TOC entry 5442 (class 0 OID 20373)
 -- Dependencies: 302
 -- Data for Name: weather_stations_report; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -19254,7 +18982,7 @@ COPY public.weather_stations_report (id, name_file, file_ref, request_time, ngay
 
 
 --
--- TOC entry 5648 (class 0 OID 20390)
+-- TOC entry 5444 (class 0 OID 20390)
 -- Dependencies: 304
 -- Data for Name: weather_stations_report_list; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -19304,57 +19032,7 @@ COPY public.weather_stations_report_list (id, weather_stations_report_id, provin
 
 
 --
--- TOC entry 5692 (class 0 OID 0)
--- Dependencies: 240
--- Name: chunk_column_stats_id_seq; Type: SEQUENCE SET; Schema: _timescaledb_catalog; Owner: postgres
---
-
-
---
--- TOC entry 5693 (class 0 OID 0)
--- Dependencies: 238
--- Name: chunk_constraint_name; Type: SEQUENCE SET; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5694 (class 0 OID 0)
--- Dependencies: 235
--- Name: chunk_id_seq; Type: SEQUENCE SET; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5695 (class 0 OID 0)
--- Dependencies: 260
--- Name: continuous_agg_migrate_plan_step_step_id_seq; Type: SEQUENCE SET; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5696 (class 0 OID 0)
--- Dependencies: 231
--- Name: dimension_id_seq; Type: SEQUENCE SET; Schema: _timescaledb_catalog; Owner: postgres
---
-
---
--- TOC entry 5697 (class 0 OID 0)
--- Dependencies: 233
--- Name: dimension_slice_id_seq; Type: SEQUENCE SET; Schema: _timescaledb_catalog; Owner: postgres
---
---
--- TOC entry 5698 (class 0 OID 0)
--- Dependencies: 227
--- Name: hypertable_id_seq; Type: SEQUENCE SET; Schema: _timescaledb_catalog; Owner: postgres
---
---
--- TOC entry 5699 (class 0 OID 0)
--- Dependencies: 242
--- Name: bgw_job_id_seq; Type: SEQUENCE SET; Schema: _timescaledb_config; Owner: postgres
---
-
-SELECT pg_catalog.setval('_timescaledb_config.bgw_job_id_seq', 1000, false);
-
-
---
--- TOC entry 5700 (class 0 OID 0)
+-- TOC entry 5482 (class 0 OID 0)
 -- Dependencies: 281
 -- Name: bgmap_commune_gid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19363,8 +19041,8 @@ SELECT pg_catalog.setval('public.bgmap_commune_gid_seq', 1, false);
 
 
 --
--- TOC entry 5701 (class 0 OID 0)
--- Dependencies: 321
+-- TOC entry 5483 (class 0 OID 0)
+-- Dependencies: 318
 -- Name: bgmap_ogc_fid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -19372,7 +19050,7 @@ SELECT pg_catalog.setval('public.bgmap_ogc_fid_seq', 34, true);
 
 
 --
--- TOC entry 5702 (class 0 OID 0)
+-- TOC entry 5484 (class 0 OID 0)
 -- Dependencies: 284
 -- Name: iw_thongsoquantrac_tskt_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19381,7 +19059,7 @@ SELECT pg_catalog.setval('public.iw_thongsoquantrac_tskt_id_seq', 6419, true);
 
 
 --
--- TOC entry 5703 (class 0 OID 0)
+-- TOC entry 5485 (class 0 OID 0)
 -- Dependencies: 309
 -- Name: map_layer_coquan_access_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19390,7 +19068,7 @@ SELECT pg_catalog.setval('public.map_layer_coquan_access_id_seq', 1, false);
 
 
 --
--- TOC entry 5704 (class 0 OID 0)
+-- TOC entry 5486 (class 0 OID 0)
 -- Dependencies: 311
 -- Name: map_layer_member_access_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19399,7 +19077,7 @@ SELECT pg_catalog.setval('public.map_layer_member_access_id_seq', 1, false);
 
 
 --
--- TOC entry 5705 (class 0 OID 0)
+-- TOC entry 5487 (class 0 OID 0)
 -- Dependencies: 307
 -- Name: map_layers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19408,7 +19086,7 @@ SELECT pg_catalog.setval('public.map_layers_id_seq', 13, true);
 
 
 --
--- TOC entry 5706 (class 0 OID 0)
+-- TOC entry 5488 (class 0 OID 0)
 -- Dependencies: 315
 -- Name: map_sources_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19417,7 +19095,7 @@ SELECT pg_catalog.setval('public.map_sources_id_seq', 5, true);
 
 
 --
--- TOC entry 5707 (class 0 OID 0)
+-- TOC entry 5489 (class 0 OID 0)
 -- Dependencies: 313
 -- Name: mapbox_apikeys_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19426,16 +19104,16 @@ SELECT pg_catalog.setval('public.mapbox_apikeys_id_seq', 1, true);
 
 
 --
--- TOC entry 5708 (class 0 OID 0)
+-- TOC entry 5490 (class 0 OID 0)
 -- Dependencies: 286
 -- Name: monitoring_data_data_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.monitoring_data_data_id_seq', 5609641, true);
+SELECT pg_catalog.setval('public.monitoring_data_data_id_seq', 5825377, true);
 
 
 --
--- TOC entry 5709 (class 0 OID 0)
+-- TOC entry 5491 (class 0 OID 0)
 -- Dependencies: 290
 -- Name: sys_coquan_cq_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19444,7 +19122,7 @@ SELECT pg_catalog.setval('public.sys_coquan_cq_id_seq', 1, true);
 
 
 --
--- TOC entry 5710 (class 0 OID 0)
+-- TOC entry 5492 (class 0 OID 0)
 -- Dependencies: 299
 -- Name: sys_danhmuc_dm_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19453,7 +19131,7 @@ SELECT pg_catalog.setval('public.sys_danhmuc_dm_id_seq', 6, true);
 
 
 --
--- TOC entry 5711 (class 0 OID 0)
+-- TOC entry 5493 (class 0 OID 0)
 -- Dependencies: 297
 -- Name: sys_danhmuc_phanloai_ldm_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19462,7 +19140,7 @@ SELECT pg_catalog.setval('public.sys_danhmuc_phanloai_ldm_id_seq', 1, true);
 
 
 --
--- TOC entry 5712 (class 0 OID 0)
+-- TOC entry 5494 (class 0 OID 0)
 -- Dependencies: 305
 -- Name: sys_function_fn_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19471,7 +19149,7 @@ SELECT pg_catalog.setval('public.sys_function_fn_id_seq', 5, true);
 
 
 --
--- TOC entry 5713 (class 0 OID 0)
+-- TOC entry 5495 (class 0 OID 0)
 -- Dependencies: 292
 -- Name: sys_role_coquan_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19480,7 +19158,7 @@ SELECT pg_catalog.setval('public.sys_role_coquan_id_seq', 1, false);
 
 
 --
--- TOC entry 5714 (class 0 OID 0)
+-- TOC entry 5496 (class 0 OID 0)
 -- Dependencies: 295
 -- Name: sys_role_member_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19489,7 +19167,7 @@ SELECT pg_catalog.setval('public.sys_role_member_id_seq', 2, true);
 
 
 --
--- TOC entry 5715 (class 0 OID 0)
+-- TOC entry 5497 (class 0 OID 0)
 -- Dependencies: 288
 -- Name: sys_role_role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19498,7 +19176,7 @@ SELECT pg_catalog.setval('public.sys_role_role_id_seq', 7, true);
 
 
 --
--- TOC entry 5716 (class 0 OID 0)
+-- TOC entry 5498 (class 0 OID 0)
 -- Dependencies: 301
 -- Name: weather_stations_report_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19507,7 +19185,7 @@ SELECT pg_catalog.setval('public.weather_stations_report_id_seq', 32, true);
 
 
 --
--- TOC entry 5717 (class 0 OID 0)
+-- TOC entry 5499 (class 0 OID 0)
 -- Dependencies: 303
 -- Name: weather_stations_report_list_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -19516,43 +19194,7 @@ SELECT pg_catalog.setval('public.weather_stations_report_list_id_seq', 107, true
 
 
 --
--- TOC entry 5421 (class 2606 OID 40464)
--- Name: _hyper_3_1_chunk 1_1_monitoring_data_pkey; Type: CONSTRAINT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_1_chunk
-    ADD CONSTRAINT "1_1_monitoring_data_pkey" PRIMARY KEY (tskt_id, data_thoigian);
-
-
---
--- TOC entry 5425 (class 2606 OID 40486)
--- Name: _hyper_3_2_chunk 2_3_monitoring_data_pkey; Type: CONSTRAINT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_2_chunk
-    ADD CONSTRAINT "2_3_monitoring_data_pkey" PRIMARY KEY (tskt_id, data_thoigian);
-
-
---
--- TOC entry 5429 (class 2606 OID 40540)
--- Name: _hyper_3_3_chunk 3_5_monitoring_data_pkey; Type: CONSTRAINT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_3_chunk
-    ADD CONSTRAINT "3_5_monitoring_data_pkey" PRIMARY KEY (tskt_id, data_thoigian);
-
-
---
--- TOC entry 5435 (class 2606 OID 52733)
--- Name: _hyper_3_4_chunk 4_7_monitoring_data_pkey; Type: CONSTRAINT; Schema: _timescaledb_internal; Owner: postgres
---
-
-ALTER TABLE ONLY _timescaledb_internal._hyper_3_4_chunk
-    ADD CONSTRAINT "4_7_monitoring_data_pkey" PRIMARY KEY (tskt_id, data_thoigian);
-
-
---
--- TOC entry 5375 (class 2606 OID 20284)
+-- TOC entry 5191 (class 2606 OID 20284)
 -- Name: bgmap_commune bgmap_commune_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19561,7 +19203,7 @@ ALTER TABLE ONLY public.bgmap_commune
 
 
 --
--- TOC entry 5433 (class 2606 OID 40606)
+-- TOC entry 5237 (class 2606 OID 40606)
 -- Name: bgmap_province bgmap_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19570,7 +19212,7 @@ ALTER TABLE ONLY public.bgmap_province
 
 
 --
--- TOC entry 5383 (class 2606 OID 20304)
+-- TOC entry 5199 (class 2606 OID 20304)
 -- Name: iw_thongsoquantrac iw_thongsoquantrac_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19579,7 +19221,7 @@ ALTER TABLE ONLY public.iw_thongsoquantrac
 
 
 --
--- TOC entry 5413 (class 2606 OID 20426)
+-- TOC entry 5229 (class 2606 OID 20426)
 -- Name: map_layer_coquan_access map_layer_coquan_access_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19588,7 +19230,7 @@ ALTER TABLE ONLY public.map_layer_coquan_access
 
 
 --
--- TOC entry 5415 (class 2606 OID 20433)
+-- TOC entry 5231 (class 2606 OID 20433)
 -- Name: map_layer_member_access map_layer_member_access_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19597,7 +19239,7 @@ ALTER TABLE ONLY public.map_layer_member_access
 
 
 --
--- TOC entry 5411 (class 2606 OID 20417)
+-- TOC entry 5227 (class 2606 OID 20417)
 -- Name: map_layers map_layers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19606,7 +19248,7 @@ ALTER TABLE ONLY public.map_layers
 
 
 --
--- TOC entry 5419 (class 2606 OID 40395)
+-- TOC entry 5235 (class 2606 OID 40395)
 -- Name: map_sources map_sources_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19615,7 +19257,7 @@ ALTER TABLE ONLY public.map_sources
 
 
 --
--- TOC entry 5417 (class 2606 OID 20444)
+-- TOC entry 5233 (class 2606 OID 20444)
 -- Name: mapbox_apikeys mapbox_apikeys_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19624,7 +19266,7 @@ ALTER TABLE ONLY public.mapbox_apikeys
 
 
 --
--- TOC entry 5387 (class 2606 OID 40437)
+-- TOC entry 5203 (class 2606 OID 40437)
 -- Name: monitoring_data monitoring_data_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19633,7 +19275,7 @@ ALTER TABLE ONLY public.monitoring_data
 
 
 --
--- TOC entry 5378 (class 2606 OID 20292)
+-- TOC entry 5194 (class 2606 OID 20292)
 -- Name: monitoring_stations monitoring_stations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19642,7 +19284,7 @@ ALTER TABLE ONLY public.monitoring_stations
 
 
 --
--- TOC entry 5380 (class 2606 OID 20294)
+-- TOC entry 5196 (class 2606 OID 20294)
 -- Name: monitoring_stations monitoring_stations_station_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19651,7 +19293,7 @@ ALTER TABLE ONLY public.monitoring_stations
 
 
 --
--- TOC entry 5391 (class 2606 OID 20331)
+-- TOC entry 5207 (class 2606 OID 20331)
 -- Name: sys_coquan sys_coquan_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19660,7 +19302,7 @@ ALTER TABLE ONLY public.sys_coquan
 
 
 --
--- TOC entry 5401 (class 2606 OID 20362)
+-- TOC entry 5217 (class 2606 OID 20362)
 -- Name: sys_danhmuc_phanloai sys_danhmuc_phanloai_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19669,7 +19311,7 @@ ALTER TABLE ONLY public.sys_danhmuc_phanloai
 
 
 --
--- TOC entry 5403 (class 2606 OID 20371)
+-- TOC entry 5219 (class 2606 OID 20371)
 -- Name: sys_danhmuc sys_danhmuc_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19678,7 +19320,7 @@ ALTER TABLE ONLY public.sys_danhmuc
 
 
 --
--- TOC entry 5409 (class 2606 OID 20406)
+-- TOC entry 5225 (class 2606 OID 20406)
 -- Name: sys_function sys_function_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19687,7 +19329,7 @@ ALTER TABLE ONLY public.sys_function
 
 
 --
--- TOC entry 5395 (class 2606 OID 20346)
+-- TOC entry 5211 (class 2606 OID 20346)
 -- Name: sys_member sys_member_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19696,7 +19338,7 @@ ALTER TABLE ONLY public.sys_member
 
 
 --
--- TOC entry 5393 (class 2606 OID 20338)
+-- TOC entry 5209 (class 2606 OID 20338)
 -- Name: sys_role_coquan sys_role_coquan_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19705,7 +19347,7 @@ ALTER TABLE ONLY public.sys_role_coquan
 
 
 --
--- TOC entry 5399 (class 2606 OID 20353)
+-- TOC entry 5215 (class 2606 OID 20353)
 -- Name: sys_role_member sys_role_member_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19714,7 +19356,7 @@ ALTER TABLE ONLY public.sys_role_member
 
 
 --
--- TOC entry 5389 (class 2606 OID 20321)
+-- TOC entry 5205 (class 2606 OID 20321)
 -- Name: sys_role sys_role_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19723,7 +19365,7 @@ ALTER TABLE ONLY public.sys_role
 
 
 --
--- TOC entry 5397 (class 2606 OID 52750)
+-- TOC entry 5213 (class 2606 OID 52750)
 -- Name: sys_member unique_username; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19732,7 +19374,7 @@ ALTER TABLE ONLY public.sys_member
 
 
 --
--- TOC entry 5407 (class 2606 OID 20397)
+-- TOC entry 5223 (class 2606 OID 20397)
 -- Name: weather_stations_report_list weather_stations_report_list_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19741,15 +19383,16 @@ ALTER TABLE ONLY public.weather_stations_report_list
 
 
 --
--- TOC entry 5405 (class 2606 OID 20381)
+-- TOC entry 5221 (class 2606 OID 20381)
 -- Name: weather_stations_report weather_stations_report_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.weather_stations_report
     ADD CONSTRAINT weather_stations_report_pkey PRIMARY KEY (id);
 
+
 --
--- TOC entry 5384 (class 1259 OID 40439)
+-- TOC entry 5200 (class 1259 OID 40439)
 -- Name: idx_monitoring_data_tsktid_thoigian; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -19757,7 +19400,7 @@ CREATE INDEX idx_monitoring_data_tsktid_thoigian ON public.monitoring_data USING
 
 
 --
--- TOC entry 5376 (class 1259 OID 20587)
+-- TOC entry 5192 (class 1259 OID 20587)
 -- Name: idx_station_commune_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -19765,7 +19408,7 @@ CREATE INDEX idx_station_commune_id ON public.monitoring_stations USING btree (c
 
 
 --
--- TOC entry 5381 (class 1259 OID 40499)
+-- TOC entry 5197 (class 1259 OID 40499)
 -- Name: idx_tskt_station_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -19773,7 +19416,7 @@ CREATE INDEX idx_tskt_station_id ON public.iw_thongsoquantrac USING btree (stati
 
 
 --
--- TOC entry 5385 (class 1259 OID 40438)
+-- TOC entry 5201 (class 1259 OID 40438)
 -- Name: monitoring_data_data_thoigian_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -19781,7 +19424,7 @@ CREATE INDEX monitoring_data_data_thoigian_idx ON public.monitoring_data USING b
 
 
 --
--- TOC entry 5463 (class 2620 OID 20584)
+-- TOC entry 5259 (class 2620 OID 20584)
 -- Name: monitoring_data ts_insert_blocker; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -19789,7 +19432,7 @@ CREATE TRIGGER ts_insert_blocker BEFORE INSERT ON public.monitoring_data FOR EAC
 
 
 --
--- TOC entry 5438 (class 2606 OID 52693)
+-- TOC entry 5238 (class 2606 OID 52693)
 -- Name: bgmap_commune fk_commune_province; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19798,7 +19441,7 @@ ALTER TABLE ONLY public.bgmap_commune
 
 
 --
--- TOC entry 5440 (class 2606 OID 40512)
+-- TOC entry 5240 (class 2606 OID 40512)
 -- Name: iw_thongsoquantrac fk_station_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19807,7 +19450,7 @@ ALTER TABLE ONLY public.iw_thongsoquantrac
 
 
 --
--- TOC entry 5447 (class 2606 OID 40343)
+-- TOC entry 5247 (class 2606 OID 40343)
 -- Name: sys_danhmuc fk_sys_danhmuc_function; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19816,7 +19459,7 @@ ALTER TABLE ONLY public.sys_danhmuc
 
 
 --
--- TOC entry 5454 (class 2606 OID 20545)
+-- TOC entry 5254 (class 2606 OID 20545)
 -- Name: map_layer_coquan_access map_layer_coquan_access_cq_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19825,7 +19468,7 @@ ALTER TABLE ONLY public.map_layer_coquan_access
 
 
 --
--- TOC entry 5455 (class 2606 OID 20550)
+-- TOC entry 5255 (class 2606 OID 20550)
 -- Name: map_layer_coquan_access map_layer_coquan_access_layer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19834,7 +19477,7 @@ ALTER TABLE ONLY public.map_layer_coquan_access
 
 
 --
--- TOC entry 5456 (class 2606 OID 20560)
+-- TOC entry 5256 (class 2606 OID 20560)
 -- Name: map_layer_member_access map_layer_member_access_layer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19843,7 +19486,7 @@ ALTER TABLE ONLY public.map_layer_member_access
 
 
 --
--- TOC entry 5457 (class 2606 OID 20555)
+-- TOC entry 5257 (class 2606 OID 20555)
 -- Name: map_layer_member_access map_layer_member_access_mem_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19852,7 +19495,7 @@ ALTER TABLE ONLY public.map_layer_member_access
 
 
 --
--- TOC entry 5452 (class 2606 OID 40418)
+-- TOC entry 5252 (class 2606 OID 40418)
 -- Name: map_layers map_layers_parent_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19861,7 +19504,7 @@ ALTER TABLE ONLY public.map_layers
 
 
 --
--- TOC entry 5453 (class 2606 OID 40403)
+-- TOC entry 5253 (class 2606 OID 40403)
 -- Name: map_layers map_layers_source_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19870,7 +19513,7 @@ ALTER TABLE ONLY public.map_layers
 
 
 --
--- TOC entry 5458 (class 2606 OID 40398)
+-- TOC entry 5258 (class 2606 OID 40398)
 -- Name: map_sources map_sources_apikey_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19879,7 +19522,7 @@ ALTER TABLE ONLY public.map_sources
 
 
 --
--- TOC entry 5441 (class 2606 OID 20465)
+-- TOC entry 5241 (class 2606 OID 20465)
 -- Name: monitoring_data monitoring_data_tskt_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19888,7 +19531,7 @@ ALTER TABLE ONLY public.monitoring_data
 
 
 --
--- TOC entry 5439 (class 2606 OID 20455)
+-- TOC entry 5239 (class 2606 OID 20455)
 -- Name: monitoring_stations monitoring_stations_commune_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19897,7 +19540,7 @@ ALTER TABLE ONLY public.monitoring_stations
 
 
 --
--- TOC entry 5448 (class 2606 OID 20495)
+-- TOC entry 5248 (class 2606 OID 20495)
 -- Name: sys_danhmuc sys_danhmuc_dm_ldm_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19906,7 +19549,7 @@ ALTER TABLE ONLY public.sys_danhmuc
 
 
 --
--- TOC entry 5444 (class 2606 OID 20480)
+-- TOC entry 5244 (class 2606 OID 20480)
 -- Name: sys_member sys_member_mem_cq_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19915,7 +19558,7 @@ ALTER TABLE ONLY public.sys_member
 
 
 --
--- TOC entry 5442 (class 2606 OID 20470)
+-- TOC entry 5242 (class 2606 OID 20470)
 -- Name: sys_role_coquan sys_role_coquan_cq_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19924,7 +19567,7 @@ ALTER TABLE ONLY public.sys_role_coquan
 
 
 --
--- TOC entry 5443 (class 2606 OID 40313)
+-- TOC entry 5243 (class 2606 OID 40313)
 -- Name: sys_role_coquan sys_role_coquan_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19933,7 +19576,7 @@ ALTER TABLE ONLY public.sys_role_coquan
 
 
 --
--- TOC entry 5445 (class 2606 OID 20485)
+-- TOC entry 5245 (class 2606 OID 20485)
 -- Name: sys_role_member sys_role_member_mem_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19942,7 +19585,7 @@ ALTER TABLE ONLY public.sys_role_member
 
 
 --
--- TOC entry 5446 (class 2606 OID 40325)
+-- TOC entry 5246 (class 2606 OID 40325)
 -- Name: sys_role_member sys_role_member_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19951,7 +19594,7 @@ ALTER TABLE ONLY public.sys_role_member
 
 
 --
--- TOC entry 5449 (class 2606 OID 20505)
+-- TOC entry 5249 (class 2606 OID 20505)
 -- Name: weather_stations_report weather_stations_report_created_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19960,7 +19603,7 @@ ALTER TABLE ONLY public.weather_stations_report
 
 
 --
--- TOC entry 5450 (class 2606 OID 20520)
+-- TOC entry 5250 (class 2606 OID 20520)
 -- Name: weather_stations_report_list weather_stations_report_list_station_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19969,7 +19612,7 @@ ALTER TABLE ONLY public.weather_stations_report_list
 
 
 --
--- TOC entry 5451 (class 2606 OID 20525)
+-- TOC entry 5251 (class 2606 OID 20525)
 -- Name: weather_stations_report_list weather_stations_report_list_weather_stations_report_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -19977,7 +19620,7 @@ ALTER TABLE ONLY public.weather_stations_report_list
     ADD CONSTRAINT weather_stations_report_list_weather_stations_report_id_fkey FOREIGN KEY (weather_stations_report_id) REFERENCES public.weather_stations_report(id) ON DELETE CASCADE;
 
 
--- Completed on 2025-06-24 17:21:59
+-- Completed on 2025-06-26 21:50:35
 
 --
 -- PostgreSQL database dump complete
