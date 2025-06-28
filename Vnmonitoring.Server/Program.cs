@@ -97,6 +97,7 @@ builder.Services.AddScoped<IPasswordHasher<SysMember>, PasswordHasher<SysMember>
 
 builder.Services.AddScoped<JwtService>();
 
+builder.Services.AddTransient<EmailHelper>();
 var app = builder.Build();
 
 app.UseDefaultFiles();

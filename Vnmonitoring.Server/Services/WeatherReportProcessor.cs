@@ -8,15 +8,17 @@ public class WeatherReportProcessor : BackgroundService
     private readonly ReportQueue _reportQueue;
     private readonly ILogger<WeatherReportProcessor> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
-
+    private readonly EmailHelper _emailHelper;
     public WeatherReportProcessor(
         ReportQueue reportQueue,
         ILogger<WeatherReportProcessor> logger,
-        IServiceScopeFactory scopeFactory)
+        IServiceScopeFactory scopeFactory,
+        EmailHelper emailHelper)
     {
         _reportQueue = reportQueue;
         _logger = logger;
         _scopeFactory = scopeFactory;
+        _emailHelper = emailHelper;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -135,7 +137,7 @@ public class WeatherReportProcessor : BackgroundService
 
         try
         {
-            await EmailHelper.SendEmailWithAttachmentAsync(
+            await _emailHelper.SendEmailWithAttachmentAsync(
                 report.Email,
                 "Báo cáo lượng mưa đã sẵn sàng",
                 $"<p>Xin chào,</p><p>Báo cáo lượng mưa của bạn đã được tạo và đính kèm trong email này.</p><p>Trân trọng.</p>",
