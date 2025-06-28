@@ -1,4 +1,5 @@
 <h2>Giao diện người dùng (90%)</h2>
+
 ![screenshot-2025-06-28-16-27-07](https://github.com/user-attachments/assets/be382aea-71a1-405c-a2fd-6e41829750c8)
 ![screenshot-2025-06-28-16-28-30](https://github.com/user-attachments/assets/9dbdd735-5252-4a8e-a9ab-ebc4f0ca4e39)
 ![screenshot-2025-06-28-16-28-30](https://github.com/user-attachments/assets/edd6ae47-bae3-4530-b2fa-3e05e74db475)
@@ -13,6 +14,7 @@
 
 
 <h2>Giao diện quản trị (30%)</h2>
+
 ![screenshot-2025-06-28-16-30-58](https://github.com/user-attachments/assets/ef9e0150-00da-4e3b-8935-6ec56eaa8ea3)
 ![screenshot-2025-06-28-16-31-06](https://github.com/user-attachments/assets/b71657b1-0604-442a-96f4-d261e1bd4ad3)
 ![screenshot-2025-06-28-16-31-56](https://github.com/user-attachments/assets/f12a2171-b2d6-4ca2-85de-c1c8f7ec6709)
