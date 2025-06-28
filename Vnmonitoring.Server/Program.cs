@@ -94,7 +94,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IPasswordHasher<SysMember>, PasswordHasher<SysMember>>();
-
+builder.Services.Configure<MyConfig>(builder.Configuration.GetSection("MyConfig"));
 builder.Services.AddScoped<JwtService>();
 
 builder.Services.AddTransient<EmailHelper>();

@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Vnmonitoring.Server.Models;
 using static System.Collections.Specialized.BitVector32;
 
@@ -46,23 +47,27 @@ namespace Vnmonitoring.Server.Services
         public float h22 { get; set; }
         public float h23 { get; set; }
     }
-
+    public class MyConfig
+    {
+        public string ApiBaseUrl { get; set; }
+    }
     public class RainDataService : IRainDataService
     {
         private readonly HttpClient _httpClient;
         private readonly WeatherDataContext _context;
         private readonly ILogger<RainDataService> _logger;
-
-        public RainDataService(HttpClient httpClient, WeatherDataContext context, ILogger<RainDataService> logger)
+        private readonly string _apiBaseUrl;
+        public RainDataService(HttpClient httpClient, WeatherDataContext context, ILogger<RainDataService> logger, IOptions<MyConfig> config)
         {
             _httpClient = httpClient;
             _context = context;
+            _apiBaseUrl = config.Value.ApiBaseUrl;
             _logger = logger;
         }
 
         public async Task FetchAndStoreRainDataAsync()
         {
-            var url = "http://vndms.dmc.gov.vn/DataQuanTracMua/DataMuaTheoGio";
+            var url = _apiBaseUrl;
             var todaydate = DateTime.Now;
             if(todaydate.Hour >= 20)
             {
