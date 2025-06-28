@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Vnmonitoring.Server/appsettings.json
+/vnmonitoring.client/.env
