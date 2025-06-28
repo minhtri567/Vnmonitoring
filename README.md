@@ -1,3 +1,11 @@
+Các công cụ dùng trong dự án : 
+<ul>
+  <li>aps.net core api 8</li>
+  <li>vite + reactjs ( dùng thư viện primereact)</li>
+  <li>postgressql + timescaledb</li>
+  <li>Geoserver</li>
+</ul>
+
 <h2>Giao diện người dùng (90%)</h2>
 
 ![screenshot-2025-06-28-16-27-07](https://github.com/user-attachments/assets/be382aea-71a1-405c-a2fd-6e41829750c8)
