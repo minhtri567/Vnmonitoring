@@ -1,32 +1,5 @@
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 17.4
--- Dumped by pg_dump version 17.4
-
--- Started on 2025-06-26 21:50:35
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- TOC entry 282 (class 1259 OID 20277)
--- Name: bgmap_commune; Type: TABLE; Schema: public; Owner: postgres
---
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS timescaledb;
 
 CREATE TABLE public.bgmap_commune (
     gid integer NOT NULL,
@@ -922,7 +895,7 @@ ALTER TABLE ONLY public.mapbox_apikeys ALTER COLUMN id SET DEFAULT nextval('publ
 -- Name: monitoring_data data_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.monitoring_data ALTER COLUMN data_id SET DEFAULT nextval('public.monitoring_data_data_id_seq'::regclass);
+ALTER TABLE public.monitoring_data ALTER COLUMN data_id SET DEFAULT nextval('public.monitoring_data_data_id_seq'::regclass);
 
 
 --
@@ -19270,7 +19243,7 @@ ALTER TABLE ONLY public.mapbox_apikeys
 -- Name: monitoring_data monitoring_data_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.monitoring_data
+ALTER TABLE public.monitoring_data
     ADD CONSTRAINT monitoring_data_pkey PRIMARY KEY (tskt_id, data_thoigian);
 
 
@@ -19420,7 +19393,7 @@ CREATE INDEX idx_tskt_station_id ON public.iw_thongsoquantrac USING btree (stati
 -- Name: monitoring_data_data_thoigian_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX monitoring_data_data_thoigian_idx ON public.monitoring_data USING btree (data_thoigian DESC);
+CREATE INDEX IF NOT EXISTS monitoring_data_data_thoigian_idx ON public.monitoring_data USING btree (data_thoigian DESC);
 
 
 --
