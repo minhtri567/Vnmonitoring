@@ -57,7 +57,7 @@ const DetailPage = () => {
     }, [selectedOptimes]);
     
     useEffect(() => {
-        if (datatablerain?.data?.length) {
+        if (datatablerain?.data?.length && selectedStations == null) {
             const firstStation = {
                 stationName: 'Tất cả trạm',
                 stationId: 'all'

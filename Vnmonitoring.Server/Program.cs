@@ -7,6 +7,7 @@ using System.Text;
 using Vnmonitoring.Server.Middlewares;
 using Vnmonitoring.Server.Models;
 using Vnmonitoring.Server.Services;
+using static EmailHelper;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -55,6 +56,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddSingleton<ReportQueue>();
 builder.Services.AddHostedService<WeatherReportProcessor>();
 

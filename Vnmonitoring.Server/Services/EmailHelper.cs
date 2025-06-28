@@ -1,14 +1,21 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using Microsoft.Extensions.Options;
 
 public class EmailHelper
 {
-    public static async Task SendEmailWithAttachmentAsync(string toEmail, string subject, string body, string attachmentPath)
+    private readonly SmtpSettings _smtpSettings;
+
+    public EmailHelper(IOptions<SmtpSettings> smtpSettings)
     {
-        var smtpHost = "smtp.ionos.com";
-        var smtpPort = 587;
-        var smtpUser = "vn@vietnammonitoring.com";
-        var smtpPass = "Dongtri@2k30419";
+        _smtpSettings = smtpSettings.Value;
+    }
+    public async Task SendEmailWithAttachmentAsync(string toEmail, string subject, string body, string attachmentPath)
+    {
+        var smtpHost = _smtpSettings.Host;
+        var smtpPort = _smtpSettings.Port;
+        var smtpUser = _smtpSettings.Username;
+        var smtpPass = _smtpSettings.Password;
 
         using var client = new SmtpClient(smtpHost, smtpPort)
         {
@@ -32,4 +39,12 @@ public class EmailHelper
 
         await client.SendMailAsync(message);
     }
+    public class SmtpSettings
+    {
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
 }
