@@ -116,7 +116,7 @@ export default function MenuPage() {
 
     const savePhanloai = () => {
         const method = isEditPhanloai ? 'PUT' : 'POST';
-        const url = isEditPhanloai ? `/api/admin/updatedanhmucphanloai/${selectedPhanloai.ldmId}` : '/api/admin/adddanhmucphanloai';
+        const url = isEditPhanloai ? `/api/admin/updatephanloai/${selectedPhanloai.ldmId}` : '/api/admin/addphanloai';
 
         fetch(url, {
             method,
@@ -126,16 +126,15 @@ export default function MenuPage() {
             },
             body: JSON.stringify(selectedPhanloai)
         })
-            .then(res => res.json())
-            .then(() => {
-                toast.current.show({ severity: 'success', summary: 'Thành công', detail: 'Đã lưu phân loại' });
-                setVisiblePhanloai(false);
-                fetchPhanloai();
-            });
+        .then(() => {
+            toast.current.show({ severity: 'success', summary: 'Thành công', detail: 'Đã lưu phân loại' });
+            setVisiblePhanloai(false);
+            fetchPhanloai();
+        });
     };
 
     const deletePhanloai = (id) => {
-        fetch(`/api/admin/deletedanhmucphanloai/${id}`, {
+        fetch(`/api/admin/deletephanloai/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         })

@@ -19,6 +19,8 @@ public partial class WeatherDataContext : DbContext
 
     public virtual DbSet<BgmapProvince> BgmapProvinces { get; set; }
 
+    public virtual DbSet<Hyper35Chunk> Hyper35Chunks { get; set; }
+
     public virtual DbSet<IwThongsoquantrac> IwThongsoquantracs { get; set; }
 
     public virtual DbSet<MapLayer> MapLayers { get; set; }
@@ -54,6 +56,7 @@ public partial class WeatherDataContext : DbContext
     public virtual DbSet<WeatherStationsReport> WeatherStationsReports { get; set; }
 
     public virtual DbSet<WeatherStationsReportList> WeatherStationsReportLists { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -95,6 +98,48 @@ public partial class WeatherDataContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("ten_tinh");
             entity.Property(e => e.TinhSeo).HasColumnName("tinh_seo");
+        });
+
+        modelBuilder.Entity<Hyper35Chunk>(entity =>
+        {
+            entity.HasKey(e => new { e.TsktId, e.DataThoigian }).HasName("5_9_monitoring_data_pkey");
+
+            entity.ToTable("_hyper_3_5_chunk", "_timescaledb_internal");
+
+            entity.HasIndex(e => new { e.TsktId, e.DataThoigian }, "_hyper_3_5_chunk_idx_monitoring_data_tsktid_thoigian").IsDescending(false, true);
+
+            entity.HasIndex(e => e.DataThoigian, "_hyper_3_5_chunk_monitoring_data_data_thoigian_idx").IsDescending();
+
+            entity.Property(e => e.TsktId).HasColumnName("tskt_id");
+            entity.Property(e => e.DataThoigian)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("data_thoigian");
+            entity.Property(e => e.Createby)
+                .HasMaxLength(150)
+                .HasColumnName("createby");
+            entity.Property(e => e.DataGiatriChuoi)
+                .HasMaxLength(250)
+                .HasColumnName("data_giatri_chuoi");
+            entity.Property(e => e.DataGiatriSothuc)
+                .HasDefaultValueSql("0")
+                .HasColumnName("data_giatri_sothuc");
+            entity.Property(e => e.DataId)
+                .HasDefaultValueSql("nextval('monitoring_data_data_id_seq'::regclass)")
+                .HasColumnName("data_id");
+            entity.Property(e => e.DataMaloaithongso)
+                .HasMaxLength(100)
+                .HasColumnName("data_maloaithongso");
+            entity.Property(e => e.DataThoigiancapnhat)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("data_thoigiancapnhat");
+            entity.Property(e => e.DataTonghop)
+                .HasMaxLength(250)
+                .HasColumnName("data_tonghop");
+
+            entity.HasOne(d => d.Tskt).WithMany(p => p.Hyper35Chunks)
+                .HasForeignKey(d => d.TsktId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("5_10_monitoring_data_tskt_id_fkey");
         });
 
         modelBuilder.Entity<IwThongsoquantrac>(entity =>
@@ -333,6 +378,18 @@ public partial class WeatherDataContext : DbContext
                 .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("key");
             entity.Property(e => e.CommuneId).HasColumnName("commune_id");
+            entity.Property(e => e.CreateAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_at");
+            entity.Property(e => e.CreateBy)
+                .HasMaxLength(100)
+                .HasColumnName("create_by");
+            entity.Property(e => e.DeleteAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("delete_at");
+            entity.Property(e => e.DeleteBy)
+                .HasMaxLength(100)
+                .HasColumnName("delete_by");
             entity.Property(e => e.Description)
                 .HasColumnType("character varying")
                 .HasColumnName("description");
@@ -350,6 +407,12 @@ public partial class WeatherDataContext : DbContext
             entity.Property(e => e.StationName)
                 .HasColumnType("character varying")
                 .HasColumnName("station_name");
+            entity.Property(e => e.UpdateAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("update_at");
+            entity.Property(e => e.UpdateBy)
+                .HasMaxLength(100)
+                .HasColumnName("update_by");
 
             entity.HasOne(d => d.Commune).WithMany(p => p.MonitoringStations)
                 .HasForeignKey(d => d.CommuneId)
@@ -666,6 +729,7 @@ public partial class WeatherDataContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("weather_stations_report_list_weather_stations_report_id_fkey");
         });
+        modelBuilder.HasSequence("chunk_constraint_name", "_timescaledb_catalog");
 
         OnModelCreatingPartial(modelBuilder);
     }

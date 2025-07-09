@@ -23,6 +23,18 @@ public partial class MonitoringStation
 
     public string? InforData { get; set; }
 
+    public DateTime? CreateAt { get; set; }
+
+    public string? CreateBy { get; set; }
+
+    public DateTime? UpdateAt { get; set; }
+
+    public string? UpdateBy { get; set; }
+
+    public DateTime? DeleteAt { get; set; }
+
+    public string? DeleteBy { get; set; }
+
     public virtual BgmapCommune? Commune { get; set; }
 
     public virtual ICollection<IwThongsoquantrac> IwThongsoquantracs { get; set; } = new List<IwThongsoquantrac>();

@@ -27,6 +27,8 @@ public partial class IwThongsoquantrac
 
     public string? NguonDulieu { get; set; }
 
+    public virtual ICollection<Hyper35Chunk> Hyper35Chunks { get; set; } = new List<Hyper35Chunk>();
+
     public virtual ICollection<MonitoringDatum> MonitoringData { get; set; } = new List<MonitoringDatum>();
 
     public virtual MonitoringStation? Station { get; set; }

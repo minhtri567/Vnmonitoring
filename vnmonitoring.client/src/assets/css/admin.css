@@ -22,3 +22,19 @@
     white-space : nowrap;
 
 }
+.admin-table-station-page{
+    white-space : nowrap;
+}
+.admin-table-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+.admin-table-toolbar-btn{
+    float : right;
+}
+.admin-table-toolbar-nag{
+    display :flex;
+    align-items:center;
+}

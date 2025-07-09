@@ -633,6 +633,201 @@ namespace Vnmonitoring.Server.Controllers
                 .ToListAsync();
         }
 
+        // quan ly danh sach trạm
+        [HttpGet("shortallstation")]
+        public async Task<ActionResult<IEnumerable<MonitoringStation>>> Getshortallstation()
+        {
+            var data = await _context.MonitoringStations
+                .Select(s => new
+                {
+                    s.StationId,
+                    s.StationName,
+                    s.Lat,
+                    s.Lon,
+                })
+                .ToListAsync();
+            return Ok(data);
+        }
+        [HttpGet("allstations/search")]
+        public async Task<ActionResult<object>> GetAllStations([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var totalItems = await _context.MonitoringStations.CountAsync();
+            var query = _context.MonitoringStations
+            .Include(s => s.Commune)
+                .ThenInclude(c => c.Tinh)
+            .OrderBy(s => s.StationId);
+
+            var stations = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(s => new {
+                s.Key,
+                s.StationId,
+                s.StationName,
+                s.Lat,
+                s.Lon,
+                s.Luuvuc,
+                s.CreateAt,
+                s.CreateBy,
+                s.UpdateAt,
+                s.UpdateBy,
+                s.DeleteAt,
+                s.DeleteBy,
+                s.Description,
+                ten_xa = s.Commune != null ? s.Commune.TenXa : null,
+                ten_tinh = s.Commune != null && s.Commune.Tinh != null ? s.Commune.Tinh.TenTinh : null
+            })
+            .ToListAsync();
+
+            return Ok(new
+            {
+                data = stations,
+                total = totalItems,
+                page,
+                pageSize
+            });
+        }
+        [HttpGet("invalid-stations")]
+        public async Task<IActionResult> GetInvalidStations(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
+        {
+            var query = _context.MonitoringStations
+                .Include(s => s.Commune)
+                    .ThenInclude(c => c.Tinh)
+                .Where(s =>
+                    s.Lat == null || s.Lon == null ||
+                    s.Lat < -90 || s.Lat > 90 ||
+                    s.Lon < -180 || s.Lon > 180 ||
+                    s.CommuneId == null
+                )
+                .OrderBy(s => s.StationId);
+
+            var total = await query.CountAsync();
+
+            var stations = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(s => new {
+                    s.StationId,
+                    s.StationName,
+                    s.Lat,
+                    s.Lon,
+                    s.CommuneId,
+                    CommuneName = s.Commune != null ? s.Commune.TenXa : null,
+                    ProvinceName = s.Commune.Tinh != null ? s.Commune.Tinh.TenTinh : null 
+                })
+                .ToListAsync();
+
+            return Ok(new
+            {
+                data = stations,
+                total,
+                page,
+                pageSize
+            });
+        }
+        [HttpGet("GetStationsWithoutData")]
+        public async Task<IActionResult> GetStationsWithoutData(
+        [FromQuery] string type = "RAIN",
+        [FromQuery] DateTime? fromDate = null,
+        [FromQuery] DateTime? toDate = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
+        {
+            fromDate ??= DateTime.Now.Date.AddDays(-1);
+            toDate ??= DateTime.Now;
+
+            // 1. Lấy danh sách StationId có dữ liệu
+            var stationIdsWithData = await (
+                from a in _context.MonitoringData
+                join b in _context.IwThongsoquantracs on a.TsktId equals b.TsktId
+                where a.DataThoigian >= fromDate && a.DataThoigian < toDate && a.DataMaloaithongso == type
+                select b.StationId
+            ).Distinct().ToListAsync();
+
+            // 2. Truy vấn danh sách trạm KHÔNG nằm trong danh sách trên
+            var query = (
+                from c in _context.MonitoringStations
+                join d in _context.BgmapCommunes on c.CommuneId equals d.Gid into gj1
+                from d in gj1.DefaultIfEmpty()
+                join f in _context.BgmapProvinces on d.TinhId equals f.Gid into gj2
+                from f in gj2.DefaultIfEmpty()
+                where !stationIdsWithData.Contains(c.StationId)
+                orderby c.StationId
+                select new
+                {
+                    c.StationId,
+                    c.StationName,
+                    c.Lat,
+                    c.Lon,
+                    TenXa = d != null ? d.TenXa : null,
+                    TenTinh = f != null ? f.TenTinh : null,
+                    TinhSeo = f != null ? f.TinhSeo : null
+                }
+            );
+
+            var total = await query.CountAsync();
+
+            var stations = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                data = stations,
+                total,
+                page,
+                pageSize
+            });
+        }
+
+        [HttpPost("addstations")]
+        public async Task<ActionResult<MonitoringStation>> AddStations(MonitoringStation data)
+        {
+            data.CreateAt = DateTime.Now;
+            data.CreateBy = User?.Identity?.Name ?? "unknown";
+            _context.MonitoringStations.Add(data);
+            await _context.SaveChangesAsync();
+            return Ok(data);
+        }
+        [HttpPut("updatestations/{id}")]
+        public async Task<IActionResult> UpdateStations(Guid id, MonitoringStation data)
+        {
+            if (id != data.Key)
+                return BadRequest();
+
+            var existing = await _context.MonitoringStations.FindAsync(id);
+            if (existing == null) return NotFound();
+
+            existing.StationId = data.StationId;
+            existing.StationName = data.StationName;
+            existing.CommuneId = data.CommuneId;
+            existing.Luuvuc = data.Luuvuc;
+            existing.Lat = data.Lat;
+            existing.Lon = data.Lon;
+            existing.Description = data.Description;
+            existing.InforData = data.InforData;
+            existing.UpdateAt = DateTime.Now;
+            existing.UpdateBy = User?.Identity?.Name ?? "unknown";
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+        [HttpDelete("deletestations/{id}")]
+        public async Task<IActionResult> Deletestations(Guid id)
+        {
+            var data = await _context.MonitoringStations.FindAsync(id);
+            if (data == null) return NotFound();
+
+            data.DeleteAt = DateTime.Now;
+            data.DeleteBy = User?.Identity?.Name ?? "unknown";
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
     }
 
 }
