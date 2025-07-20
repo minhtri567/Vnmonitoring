@@ -10,6 +10,7 @@ const OverviewPage = lazy(() => import('../pages/OverviewPage'));
 const DetailPage = lazy(() => import('../pages/DetailPage'));
 const ReportPage = lazy(() => import('../pages/ReportPage'));
 const AdminPage = lazy(() => import('../pages/AdminPage'));
+const AdminMonitoringDataPage = lazy(() => import('../pages/AdminMonitoringDataPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 import PrivateRoute from './PrivateRoute';
 import AdminRouter from './AdminRouter'

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Vnmonitoring.Server.Models;
 using Vnmonitoring.Server.DTOs;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace Vnmonitoring.Server.Controllers
 {
@@ -30,7 +31,7 @@ namespace Vnmonitoring.Server.Controllers
                         join c in _context.SysFunctions
                             on a.Functionid equals c.FnId into gj
                         from c in gj.DefaultIfEmpty() 
-                        where b.LdmMa == "PHAN_MEM_QUAN_TRAC_MUA"
+                        where b.LdmMa == "MENU_HE_THONG"
                         select new
                         {
                             a.DmId,
@@ -828,6 +829,130 @@ namespace Vnmonitoring.Server.Controllers
             return NoContent();
         }
 
+        [HttpGet("getmonitoringdata/search")]
+        public async Task<ActionResult<object>> GetMonitoringData(
+         [FromQuery] int page = 1,
+         [FromQuery] int pageSize = 10,
+         [FromQuery] DateTime? fromDate = null,
+         [FromQuery] DateTime? toDate = null,
+         [FromQuery] string? type = null,
+         [FromQuery] string? keyword = null)
+        {
+            var query = from a in _context.MonitoringData
+                        join b in _context.IwThongsoquantracs on a.TsktId equals b.TsktId
+                        join c in _context.MonitoringStations on b.StationId equals c.StationId
+                        where
+                        (fromDate == null || a.DataThoigian >= fromDate) &&
+                        (toDate == null || a.DataThoigian <= toDate) &&
+                        (type == null || a.DataMaloaithongso == type) &&
+                        (keyword == null || b.StationId.ToLower().Contains(keyword.ToLower()) || c.StationName.ToLower().Contains(keyword.ToLower()) )
+                        orderby a.DataThoigian descending
+                        select new
+                        {
+                            a.DataId,
+                            a.TsktId,
+                            a.DataThoigian,
+                            a.DataThoigiancapnhat,
+                            a.DataGiatriSothuc,
+                            a.DataGiatriChuoi,
+                            a.DataTonghop,
+                            a.DataMaloaithongso,
+                            a.Createby,
+                            TsktTen = b.TsktTen,
+                            StationId = b.StationId,
+                            StationName = c.StationName,
+                        };
+
+            var total = await query.CountAsync();
+
+            var data = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                data,
+                total,
+                page,
+                pageSize
+            });
+        }
+
+
+        // ✅ GET by ID
+        [HttpGet("getmonitoringdata/{id}")]
+        public async Task<ActionResult<MonitoringDatum>> getmonitoringdata(int id)
+        {
+            var item = await _context.MonitoringData
+                .Include(d => d.Tskt)
+                .FirstOrDefaultAsync(d => d.DataId == id);
+
+            return item == null ? NotFound() : Ok(item);
+        }
+
+        // ✅ POST (create)
+        [HttpPost("postmonitoringdata")]
+        public async Task<ActionResult<MonitoringDatum>> postmonitoringdata(MonitoringDatum input)
+        {
+            _context.MonitoringData.Add(input);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(getmonitoringdata), new { id = input.DataId }, input);
+        }
+
+        // ✅ PUT (update)
+        [HttpPut("putmonitoringdata/{id}")]
+        public async Task<IActionResult> putmonitoringdata(int id, MonitoringDatum input)
+        {
+            if (id != input.DataId)
+                return BadRequest();
+
+            _context.Entry(input).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _context.MonitoringData.AnyAsync(e => e.DataId == id))
+                    return NotFound();
+                else
+                    throw;
+            }
+
+            return NoContent();
+        }
+
+        // ✅ DELETE
+        [HttpDelete("deletemonitoringdata/{id}")]
+        public async Task<IActionResult> deletemonitoringdata(int id)
+        {
+            var item = await _context.MonitoringData.FindAsync(id);
+            if (item == null)
+                return NotFound();
+
+            _context.MonitoringData.Remove(item);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpGet("getalltypedata")]
+        public async Task<ActionResult<IEnumerable<SysDanhmuc>>> Getalltypedata()
+        {
+            var rawData = await (
+                from a in _context.SysDanhmucs
+                join b in _context.SysDanhmucPhanloais on a.DmLdmId equals b.LdmId
+                where b.LdmMa == "DATA_TYPE"
+                select new
+                {
+                    label = a.DmTen,
+                    value = a.DmMa,
+                }
+            ).ToListAsync();
+
+            return Ok(rawData);
+        }
     }
 
 }

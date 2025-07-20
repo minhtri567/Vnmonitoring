@@ -159,13 +159,13 @@ export default function MenuPage() {
     );
     const headerdanhmuc = (
         <div className="d-flex justify-content-between mb-2">
-            <h5>Danh sách menu</h5>
+            <h5>Danh sách danh mục</h5>
             <Button label="Thêm mới" icon="pi pi-plus" size="small" onClick={openNew} />
         </div>
     );
     const headerphanloai = (
         <div className="d-flex justify-content-between mb-2">
-            <h5>Danh sách hệ thống</h5>
+            <h5>Danh sách loại danh mục</h5>
             <Button label="Thêm mới" icon="pi pi-plus" size="small" onClick={openNewPhanloai} />
         </div>
     );

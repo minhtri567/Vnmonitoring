@@ -21,6 +21,7 @@ const AdminRouter = () => {
         BanDoPage: React.lazy(() => import('../pages/BanDoPage')),
         AdminUserPage: React.lazy(() => import('../pages/AdminUserPage')),
         AdminStationPage: React.lazy(() => import('../pages/AdminStationPage')),
+        AdminMonitoringDataPage: React.lazy(() => import('../pages/AdminMonitoringDataPage')),
     };
 
     return (
