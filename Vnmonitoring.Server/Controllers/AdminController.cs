@@ -668,12 +668,6 @@ namespace Vnmonitoring.Server.Controllers
                 s.Lat,
                 s.Lon,
                 s.Luuvuc,
-                s.CreateAt,
-                s.CreateBy,
-                s.UpdateAt,
-                s.UpdateBy,
-                s.DeleteAt,
-                s.DeleteBy,
                 s.Description,
                 ten_xa = s.Commune != null ? s.Commune.TenXa : null,
                 ten_tinh = s.Commune != null && s.Commune.Tinh != null ? s.Commune.Tinh.TenTinh : null
@@ -787,8 +781,6 @@ namespace Vnmonitoring.Server.Controllers
         [HttpPost("addstations")]
         public async Task<ActionResult<MonitoringStation>> AddStations(MonitoringStation data)
         {
-            data.CreateAt = DateTime.Now;
-            data.CreateBy = User?.Identity?.Name ?? "unknown";
             _context.MonitoringStations.Add(data);
             await _context.SaveChangesAsync();
             return Ok(data);
@@ -810,8 +802,6 @@ namespace Vnmonitoring.Server.Controllers
             existing.Lon = data.Lon;
             existing.Description = data.Description;
             existing.InforData = data.InforData;
-            existing.UpdateAt = DateTime.Now;
-            existing.UpdateBy = User?.Identity?.Name ?? "unknown";
 
             await _context.SaveChangesAsync();
             return NoContent();
@@ -822,9 +812,7 @@ namespace Vnmonitoring.Server.Controllers
             var data = await _context.MonitoringStations.FindAsync(id);
             if (data == null) return NotFound();
 
-            data.DeleteAt = DateTime.Now;
-            data.DeleteBy = User?.Identity?.Name ?? "unknown";
-
+            _context.MonitoringStations.Remove(data);
             await _context.SaveChangesAsync();
             return NoContent();
         }

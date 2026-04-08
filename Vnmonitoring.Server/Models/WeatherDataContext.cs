@@ -333,18 +333,6 @@ public partial class WeatherDataContext : DbContext
                 .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("key");
             entity.Property(e => e.CommuneId).HasColumnName("commune_id");
-            entity.Property(e => e.CreateAt)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("create_at");
-            entity.Property(e => e.CreateBy)
-                .HasMaxLength(100)
-                .HasColumnName("create_by");
-            entity.Property(e => e.DeleteAt)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("delete_at");
-            entity.Property(e => e.DeleteBy)
-                .HasMaxLength(100)
-                .HasColumnName("delete_by");
             entity.Property(e => e.Description)
                 .HasColumnType("character varying")
                 .HasColumnName("description");
@@ -362,12 +350,6 @@ public partial class WeatherDataContext : DbContext
             entity.Property(e => e.StationName)
                 .HasColumnType("character varying")
                 .HasColumnName("station_name");
-            entity.Property(e => e.UpdateAt)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("update_at");
-            entity.Property(e => e.UpdateBy)
-                .HasMaxLength(100)
-                .HasColumnName("update_by");
 
             entity.HasOne(d => d.Commune).WithMany(p => p.MonitoringStations)
                 .HasForeignKey(d => d.CommuneId)
