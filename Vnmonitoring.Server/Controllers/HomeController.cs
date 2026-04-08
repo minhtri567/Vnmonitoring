@@ -94,7 +94,7 @@ namespace Vnmonitoring.Server.Controllers
         }
         [HttpGet("data-rain-province-newest")]
         [HttpGet("data-rain-all-province-newest/search")]
-        public async Task<IActionResult> datarainprovincenewest([FromQuery] string type)
+        public async Task<IActionResult> datarainprovincenewest([FromQuery] string? type = "RAIN")
         {
             var now = DateTime.Now;
             var latestTime = await _context.MonitoringData.OrderByDescending(m => m.DataThoigian).FirstOrDefaultAsync();
