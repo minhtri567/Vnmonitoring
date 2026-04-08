@@ -92,15 +92,19 @@ namespace Vnmonitoring.Server.Controllers
                 .FirstOrDefaultAsync();
             return Ok(name);
         }
-        [HttpGet("data-rain-all-province-newest/search")]
+        [HttpGet("data-rain-province-newest")]
         public async Task<IActionResult> datarainprovincenewest([FromQuery] string type)
         {
             var now = DateTime.Now;
-            var latestTime = await _context.MonitoringData.MaxAsync(m => m.DataThoigian);
-            var lasttimeday = new DateTime(latestTime.Year, latestTime.Month, latestTime.Day, 0, 0, 0);
-            if (latestTime.Day > now.Day)
+            var latestTime = await _context.MonitoringData.OrderByDescending(m => m.DataThoigian).FirstOrDefaultAsync();
+            if (latestTime == null)
             {
-                lasttimeday = new DateTime(latestTime.Year, latestTime.Month, now.Day, 0, 0, 0);
+                return Ok(new { lasttimeday = now.ToString("dd/MM HH:mm"), data = new List<object>() });
+            }
+            var lasttimeday = new DateTime(latestTime.DataThoigian.Year, latestTime.DataThoigian.Month, latestTime.DataThoigian.Day, 0, 0, 0);
+            if (latestTime.DataThoigian.Day > now.Day)
+            {
+                lasttimeday = new DateTime(latestTime.DataThoigian.Year, latestTime.DataThoigian.Month, now.Day, 0, 0, 0);
             }
             var rawData = await (
                 from a in _context.MonitoringData
@@ -125,13 +129,14 @@ namespace Vnmonitoring.Server.Controllers
                 {
                     g.Key.TenTinh,
                     g.Key.StationId,
-                    StationName = g.First().StationName,
-                    TenXa = g.First().TenXa,
-                    Tinhseo = g.First().Tinhseo,
+                    StationName = g.FirstOrDefault().StationName,
+                    TenXa = g.FirstOrDefault().TenXa,
+                    Tinhseo = g.FirstOrDefault().Tinhseo,
                     Total = g.Sum(x => x.DataGiatriSothuc ?? 0)
                 })
                 .GroupBy(x => x.TenTinh)
-                .Select(g => g.OrderByDescending(x => x.Total).First())
+                .Select(g => g.OrderByDescending(x => x.Total).FirstOrDefault())
+                .Where(x => x != null)
                 .OrderByDescending(x => x.Total)
                 .ToList();
 
@@ -147,7 +152,12 @@ namespace Vnmonitoring.Server.Controllers
         public async Task<IActionResult> datarainstationnewest([FromQuery] string type, [FromQuery] string? tinh_seo)
         {
             var now = DateTime.Now;
-            var latestTime = await _context.MonitoringData.MaxAsync(m => m.DataThoigian);
+            var latestData = await _context.MonitoringData.OrderByDescending(m => m.DataThoigian).FirstOrDefaultAsync();
+            if (latestData == null)
+            {
+                return Ok(new List<object>());
+            }
+            var latestTime = latestData.DataThoigian;
             var lasttimeday = new DateTime(latestTime.Year, latestTime.Month, latestTime.Day, 0, 0, 0);
             if (latestTime.Day > now.Day) {
 
@@ -179,14 +189,14 @@ namespace Vnmonitoring.Server.Controllers
                .Select(g => new
                {
                    Total = g.Sum(x => x.DataGiatriSothuc),
-                   lat = g.First().Lat,
-                   lon = g.First().Lon,
-                   tinh = g.First().TenTinh,
-                   xa = g.First().TenXa,
-                   tinhid = g.First().Gid,
+                   lat = g.FirstOrDefault().Lat,
+                   lon = g.FirstOrDefault().Lon,
+                   tinh = g.FirstOrDefault().TenTinh,
+                   xa = g.FirstOrDefault().TenXa,
+                   tinhid = g.FirstOrDefault().Gid,
                    data_thoigian = lasttimeday.ToString("dd/MM HH:mm"),
-                   station_name = g.First().StationName,
-                   station_id = g.First().StationId,
+                   station_name = g.FirstOrDefault().StationName,
+                   station_id = g.FirstOrDefault().StationId,
                })
                .OrderByDescending(g => g.Total)
                .ToList();

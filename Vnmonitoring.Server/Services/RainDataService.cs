@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Vnmonitoring.Server.Models;
+using Vnmonitoring.Server.Utilities;
 using static System.Collections.Specialized.BitVector32;
 
 namespace Vnmonitoring.Server.Services
@@ -68,7 +69,7 @@ namespace Vnmonitoring.Server.Services
         public async Task FetchAndStoreRainDataAsync()
         {
             var url = _apiBaseUrl;
-            var todaydate = DateTime.Now;
+            var todaydate = TimeZoneHelper.GetVietnamNow();
             if(todaydate.Hour >= 20)
             {
                 todaydate = todaydate.AddDays(1);
@@ -97,7 +98,7 @@ namespace Vnmonitoring.Server.Services
 
             if (response.IsSuccessStatusCode)
             {
-                var cutoffTime = DateTime.Now.Date.AddDays(-1).AddHours(20);
+                var cutoffTime = TimeZoneHelper.GetVietnamToday().AddDays(-1).AddHours(20);
                 if (todaydate.Hour >= 20)
                 {
                     await _context.Database.ExecuteSqlRawAsync("DELETE FROM monitoring_data WHERE data_maloaithongso = 'RAIN' AND data_thoigian >= ((current_date) + time '20:00:00') ;");

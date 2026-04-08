@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Vnmonitoring.Server.Utilities;
 
 namespace Vnmonitoring.Server.Services
 {
@@ -34,7 +35,7 @@ namespace Vnmonitoring.Server.Services
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(3),
+                expires: TimeZoneHelper.GetVietnamNow().AddDays(3),
                 signingCredentials: creds
             );
 

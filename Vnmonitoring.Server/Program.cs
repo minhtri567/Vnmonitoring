@@ -18,12 +18,21 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy
-                .WithOrigins("https://localhost:49863" , "http://129.150.52.185")
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials()
-                .WithExposedHeaders("Content-Disposition");
+            if (builder.Environment.IsDevelopment())
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            }
+            else
+            {
+                policy
+                    .WithOrigins("https://localhost:49863", "http://129.150.52.185", "http://localhost:3000", "http://localhost", "http://localhost:80")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .WithExposedHeaders("Content-Disposition");
+            }
         });
 });
 
@@ -61,14 +70,21 @@ builder.Services.AddSingleton<ReportQueue>();
 builder.Services.AddHostedService<WeatherReportProcessor>();
 
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrEmpty(connectionString))
+    throw new InvalidOperationException("DefaultConnection is not configured in appsettings.");
+
 builder.Services.AddDbContext<WeatherDataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), x => x.UseNetTopologySuite()));
+    options.UseNpgsql(connectionString, x => x.UseNetTopologySuite()));
 
 builder.Services.AddHttpClient<IRainDataService, RainDataService>();
 builder.Services.AddHostedService<RainDataHostedService>();
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
-var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+var jwtKey = jwtSettings["Key"];
+if (string.IsNullOrEmpty(jwtKey))
+    throw new InvalidOperationException("JWT Key is not configured in appsettings.");
+var key = Encoding.UTF8.GetBytes(jwtKey);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -79,14 +95,20 @@ builder.Services.AddAuthentication(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
+    var issuer = jwtSettings["Issuer"];
+    var audience = jwtSettings["Audience"];
+    if (string.IsNullOrEmpty(issuer))
+        throw new InvalidOperationException("JWT Issuer is not configured in appsettings.");
+    if (string.IsNullOrEmpty(audience))
+        throw new InvalidOperationException("JWT Audience is not configured in appsettings.");
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
+        ValidIssuer = issuer,
+        ValidAudience = audience,
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 });
