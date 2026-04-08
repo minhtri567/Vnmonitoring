@@ -21,6 +21,7 @@ services:
       context: ./vnmonitoring.client
       args:
         IS_DOCKER: "true"
+        VITE_API_URL: "/api"
     environment:
       - IS_DOCKER=true
       - TZ=Asia/Ho_Chi_Minh
