@@ -1,5 +1,7 @@
 ﻿using Vnmonitoring.Server.Services;
 using Vnmonitoring.Server.Utilities;
+using Vnmonitoring.Server.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class RainDataHostedService : BackgroundService
 {
@@ -16,6 +18,19 @@ public class RainDataHostedService : BackgroundService
     {
         try
         {
+            // Lần đầu: check nếu bảng trống thì fetch ngay
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<WeatherDataContext>();
+                var hasData = await context.MonitoringData.Where(m => m.DataMaloaithongso == "RAIN").AnyAsync(stoppingToken);
+                if (!hasData)
+                {
+                    _logger.LogInformation("Bảng monitoring_data trống, fetch dữ liệu lần đầu...");
+                    var rainService = scope.ServiceProvider.GetRequiredService<IRainDataService>();
+                    await rainService.FetchAndStoreRainDataAsync();
+                }
+            }
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 var now = TimeZoneHelper.GetVietnamNow();
