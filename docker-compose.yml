@@ -6,6 +6,8 @@ services:
     ports:
       - "7101:8080"
     environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Production
       - Jwt__Key=super_secret_key_123456
 
     
