@@ -8,6 +8,8 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_ENVIRONMENT=Development
       - Jwt__Key=super_secret_key_123456789_minimum_32_characters
+      - Jwt__Issuer=VnmonitoringAPI
+      - Jwt__Audience=VnmonitoringClient
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=data_monitoring;Username=postgres;Password=12345678
       - TZ=Asia/Ho_Chi_Minh
     depends_on:
