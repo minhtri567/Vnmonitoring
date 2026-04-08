@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins("https://localhost:49863")
+                .WithOrigins("https://localhost:49863" , "http://129.150.52.185")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials()
@@ -107,12 +107,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseStaticFiles();
 
 app.UseCors("AllowFrontend");
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseMiddleware<JwtMiddleware>();
 
