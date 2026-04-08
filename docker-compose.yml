@@ -11,6 +11,7 @@ services:
       - Jwt__Issuer=VnmonitoringAPI
       - Jwt__Audience=VnmonitoringClient
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=data_monitoring;Username=postgres;Password=12345678
+      - MyConfig__ApiBaseUrl=http://vndms.dmc.gov.vn/DataQuanTracMua/DataMuaTheoGio
       - TZ=Asia/Ho_Chi_Minh
     depends_on:
       - db
