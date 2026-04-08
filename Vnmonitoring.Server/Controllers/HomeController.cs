@@ -93,6 +93,7 @@ namespace Vnmonitoring.Server.Controllers
             return Ok(name);
         }
         [HttpGet("data-rain-province-newest")]
+        [HttpGet("data-rain-all-province-newest/search")]
         public async Task<IActionResult> datarainprovincenewest([FromQuery] string type)
         {
             var now = DateTime.Now;
