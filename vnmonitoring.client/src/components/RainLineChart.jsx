@@ -5,25 +5,36 @@ const RainLineChart = ({ rainData, stationId }) => {
     const chartRef = useRef(null);
 
     useEffect(() => {
-        if (!rainData || !rainData.data || !Array.isArray(rainData.data) || rainData.data.length === 0 || !chartRef.current) return;
+        if (!rainData || !chartRef.current) return;
+        
+        // Defensive checks for data structure
+        if (!rainData.data || !Array.isArray(rainData.data) || rainData.data.length === 0) {
+            console.warn('Invalid rainData:', rainData);
+            return;
+        }
+        
+        // Ensure listTime is valid array
+        const xData = Array.isArray(rainData.listTime) ? rainData.listTime : [];
+        if (xData.length === 0) {
+            console.warn('No time data available');
+            return;
+        }
 
         const chart = echarts.init(chartRef.current);
-
-        let xData = rainData.listTime || [];
         let seriesData = [];
         
         if (stationId === 'all') {
             seriesData = rainData.data
-                .filter(station => station && station.values) // Filter out invalid stations
+                .filter(station => station && Array.isArray(station.values) && station.values.length > 0)
                 .map((station) => ({
                     type: 'bar',
                     name: station.stationName || 'Unknown Station',
-                    data: station.values || [],
+                    data: station.values,
                     large: true,
                 }));
         } else {
             const selectedStation = rainData.data.find(s => s && s.stationId === stationId);
-            if (selectedStation && selectedStation.values) {
+            if (selectedStation && Array.isArray(selectedStation.values) && selectedStation.values.length > 0) {
                 const cumulativeValues = selectedStation.values.reduce((acc, val, idx) => {
                     const prev = idx > 0 ? acc[idx - 1] : 0;
                     acc.push(prev + val);
@@ -31,10 +42,10 @@ const RainLineChart = ({ rainData, stationId }) => {
                 }, []);
                 seriesData = [
                     {
-                    type: 'bar',
-                    name: selectedStation.stationName || 'Unknown Station',
-                    data: selectedStation.values || [],
-                    large: true,
+                        type: 'bar',
+                        name: selectedStation.stationName || 'Unknown Station',
+                        data: selectedStation.values,
+                        large: true,
                     },
                     {
                         type: 'line',
@@ -51,6 +62,12 @@ const RainLineChart = ({ rainData, stationId }) => {
                 ];
             }
         }
+        
+        if (seriesData.length === 0) {
+            console.warn('No valid series data found');
+            return;
+        }
+        
         const option = {
             tooltip: {
                 valueFormatter: function (value) {
@@ -61,6 +78,7 @@ const RainLineChart = ({ rainData, stationId }) => {
                 top: 0,
             },
             xAxis: {
+                type: 'category',
                 data: xData,
                 axisLabel: { rotate: 45 },
             },
