@@ -5,22 +5,25 @@ const RainLineChart = ({ rainData, stationId }) => {
     const chartRef = useRef(null);
 
     useEffect(() => {
-        if (!rainData || !rainData.data || rainData.data.length === 0 || !chartRef.current) return;
+        if (!rainData || !rainData.data || !Array.isArray(rainData.data) || rainData.data.length === 0 || !chartRef.current) return;
 
         const chart = echarts.init(chartRef.current);
 
-        let xData = rainData.listTime;
+        let xData = rainData.listTime || [];
         let seriesData = [];
+        
         if (stationId === 'all') {
-            seriesData = rainData.data.map((station) => ({
-                type: 'bar',
-                name: station.stationName,
-                data: station.values,
-                large: true,
-            }));
+            seriesData = rainData.data
+                .filter(station => station && station.values) // Filter out invalid stations
+                .map((station) => ({
+                    type: 'bar',
+                    name: station.stationName || 'Unknown Station',
+                    data: station.values || [],
+                    large: true,
+                }));
         } else {
-            const selectedStation = rainData.data.find(s => s.stationId === stationId);
-            if (selectedStation) {
+            const selectedStation = rainData.data.find(s => s && s.stationId === stationId);
+            if (selectedStation && selectedStation.values) {
                 const cumulativeValues = selectedStation.values.reduce((acc, val, idx) => {
                     const prev = idx > 0 ? acc[idx - 1] : 0;
                     acc.push(prev + val);
@@ -29,13 +32,13 @@ const RainLineChart = ({ rainData, stationId }) => {
                 seriesData = [
                     {
                     type: 'bar',
-                    name: selectedStation.stationName,
-                    data: selectedStation.values,
+                    name: selectedStation.stationName || 'Unknown Station',
+                    data: selectedStation.values || [],
                     large: true,
                     },
                     {
                         type: 'line',
-                        name: 'Mưa tích lũy trạm ' + selectedStation.stationName,
+                        name: 'Mưa tích lũy trạm ' + (selectedStation.stationName || 'Unknown'),
                         data: cumulativeValues,
                         smooth: true,
                         lineStyle: {
