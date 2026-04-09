@@ -46,13 +46,13 @@ const OverviewPage = () => {
     const { province } = useOutletContext();
     const inputRef = useRef(null);
     const [query] = useState({ type: 'RAIN', tinh_seo: province.tinhSeo });
-    const { data: datamonitoring } = useFetchList('api/Home/data-rain-station-newest', query, '');
-    const { data: apiKeys, loading: loadingKeys} = useFetchList('api/Home/user-keymapbox', '', '');
-    const { data: layers, loading: loadingLayers} = useFetchList('api/Home/user-maplayer', '', '');
-    const { data: sources, loading: loadingSources} = useFetchList('api/Home/user-mapsource', '', '');
+    const { data: datamonitoring } = useFetchList('/api/Home/data-rain-station-newest', query, '');
+    const { data: apiKeys, loading: loadingKeys} = useFetchList('/api/Home/user-keymapbox', '', '');
+    const { data: layers, loading: loadingLayers} = useFetchList('/api/Home/user-maplayer', '', '');
+    const { data: sources, loading: loadingSources} = useFetchList('/api/Home/user-mapsource', '', '');
 
     const [querytime, setQuerytime] = useState({});
-    const { data: datatablerain } = useFetchList('api/Home/data-rain-province-newest', querytime, '');
+    const { data: datatablerain } = useFetchList('/api/Home/data-rain-province-newest', querytime, '');
 
     const handleSubmit = () => {
         setQuerytime({

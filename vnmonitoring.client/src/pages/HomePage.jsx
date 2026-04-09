@@ -58,12 +58,12 @@ const HomePage = () => {
     }); 
     const [showSearchInput, setShowSearchInput] = useState(false);
     const inputRef = useRef(null);
-    const { data: apiKeys, loading: loadingKeys, error: errorKeys } = useFetchList('api/Home/user-keymapbox', '', '');
-    const { data: layers, loading: loadingLayers, error: errorLayers } = useFetchList('api/Home/user-maplayer', '', '');
-    const { data: sources, loading: loadingSources, error: errorSources } = useFetchList('api/Home/user-mapsource', '', '');
+    const { data: apiKeys, loading: loadingKeys, error: errorKeys } = useFetchList('/api/Home/user-keymapbox', '', '');
+    const { data: layers, loading: loadingLayers, error: errorLayers } = useFetchList('/api/Home/user-maplayer', '', '');
+    const { data: sources, loading: loadingSources, error: errorSources } = useFetchList('/api/Home/user-mapsource', '', '');
     const [query] = useState({ type: 'RAIN' });
-    const { data: datamonitoring } = useFetchList('api/Home/data-rain-all-province-newest', query , '');
-    const { data: datastationrain } = useFetchList('api/Home/data-rain-station-newest', query, '');
+    const { data: datamonitoring } = useFetchList('/api/Home/data-rain-all-province-newest', query , '');
+    const { data: datastationrain } = useFetchList('/api/Home/data-rain-station-newest', query, '');
     const [querytime, setQuerytime] = useState({});
 
     const handleSubmit = () => {
@@ -75,7 +75,7 @@ const HomePage = () => {
             viewMode: selectedViewMode.code
         });
     };
-    const { data: datatablerain } = useFetchList('api/Home/data-rain-province-newest', querytime, '');
+    const { data: datatablerain } = useFetchList('/api/Home/data-rain-province-newest', querytime, '');
     useEffect(() => {
         if (selectedProvince != null) {
             setQuerytime({

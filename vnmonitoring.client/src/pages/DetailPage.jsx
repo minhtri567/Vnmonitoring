@@ -31,7 +31,7 @@ const DetailPage = () => {
     const [toTime, setToTime] = useState(null);
     const { province } = useOutletContext();
     const [querytime, setQuerytime] = useState({});
-    const { data: datatablerain} = useFetchList('api/Home/data-rain-province-newest', querytime, '');
+    const { data: datatablerain} = useFetchList('/api/Home/data-rain-province-newest', querytime, '');
 
     useEffect(() => {
         let from = null;

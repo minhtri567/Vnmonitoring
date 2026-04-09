@@ -42,10 +42,10 @@ const ReportPage = () => {
     const [datareport, setdatareport] = useState();
 
     const [query] = useState({ type: typedata, tinh_id: province.gid });
-    const { data: datatablerain } = useFetchList('api/Home/get-all-station-province', query, '');
+    const { data: datatablerain } = useFetchList('/api/Home/get-all-station-province', query, '');
      const fetchData = async () => {
         try {
-            const response = await api.get(`api/Home/get-getreportxlsx-province/search?type=${typedata}&tinh_id=${province.gid}`);
+            const response = await api.get(`/api/Home/get-getreportxlsx-province/search?type=${typedata}&tinh_id=${province.gid}`);
             setdatareport(response.data);
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu:", error);

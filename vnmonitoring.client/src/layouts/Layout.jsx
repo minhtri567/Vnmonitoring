@@ -11,7 +11,7 @@ const Layout = () => {
     const user = localStorage.getItem('user');
     const [query] = useState({tinh_seo: tinh_seo });
     const [province, setProvince] = useState(null);
-    const { data: dataname } = useFetchList('api/Home/get-name-province', query, '');
+    const { data: dataname } = useFetchList('/api/Home/get-name-province', query, '');
     useEffect(() => {
         if (dataname.length != 0) {
             setProvince(dataname)
