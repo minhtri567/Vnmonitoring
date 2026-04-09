@@ -361,5 +361,39 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/Vnmonitoring.Server/appsettings.json
-/vnmonitoring.client/.env
+
+# ============================================
+# SENSITIVE FILES - NEVER COMMIT TO GITHUB
+# ============================================
+
+# Configuration files with secrets
+Vnmonitoring.Server/appsettings.json
+Vnmonitoring.Server/appsettings.Development.json
+Vnmonitoring.Server/appsettings.Production.json
+
+# Environment files
+.env
+.env.local
+.env.*.local
+vnmonitoring.client/.env
+vnmonitoring.client/.env.local
+
+# Docker compose with real credentials
+docker-compose.yml
+docker-compose.override.yml
+
+# IDE and local files
+.vscode/settings.json
+.idea/
+*.iml
+
+# SSH keys and certificates
+*.pem
+*.key
+*.crt
+*.pfx
+
+# API keys and tokens
+.api-key
+.token
+auth.json
