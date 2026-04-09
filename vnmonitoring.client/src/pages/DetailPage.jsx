@@ -167,7 +167,9 @@ const DetailPage = () => {
           </div>
           {!hiddenchart ? "" :
               <div className="data-rain-chart-view">
-                  {datatablerain && datatablerain.listTime && datatablerain.data ? (
+                  {datatablerain && 
+                   Array.isArray(datatablerain.listTime) && datatablerain.listTime.length > 0 &&
+                   Array.isArray(datatablerain.data) && datatablerain.data.length > 0 ? (
                       <RainLineChart
                           rainData={datatablerain}
                           stationId={selectedStations === null ? null : selectedStations.stationId}

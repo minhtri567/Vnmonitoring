@@ -23,11 +23,13 @@ const RainTable = ({ rainData, stationId }) => {
             const row = {
                 stationId: station.stationId,
                 stationName: station.stationName,
-                rainSum: station.rainSum + ' ml',
+                rainSum: (station.rainSum || 0) + ' ml',
             };
-            station.values.forEach((val, idx) => {
-                row[`h${idx}`] = val + ' ml';
-            });
+            if (Array.isArray(station.values)) {
+                station.values.forEach((val, idx) => {
+                    row[`h${idx}`] = (val || 0) + ' ml';
+                });
+            }
             return row;
         });
 
@@ -37,7 +39,7 @@ const RainTable = ({ rainData, stationId }) => {
         }, 300);
     }, [rainData, stationId]);
 
-    if (!rainData || !rainData.listTime) return null;
+    if (!rainData || !Array.isArray(rainData.listTime) || rainData.listTime.length === 0) return null;
 
     const columns = [
         { field: 'stationName', header: 'Trạm đo'},
