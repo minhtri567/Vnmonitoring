@@ -31,7 +31,7 @@ namespace Vnmonitoring.Server.Controllers
                         join c in _context.SysFunctions
                             on a.Functionid equals c.FnId into gj
                         from c in gj.DefaultIfEmpty() 
-                        where b.LdmMa == "MENU_HE_THONG"
+                        where b.LdmMa == "PHAN_MEM_QUAN_TRAC_MUA"
                         select new
                         {
                             a.DmId,

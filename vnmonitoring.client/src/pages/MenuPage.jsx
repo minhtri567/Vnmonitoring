@@ -13,6 +13,7 @@ export default function MenuPage() {
     const [danhmuc, setDanhmuc] = useState([]);
     const [phanloai, setPhanloai] = useState([]);
     const [chucnang, setchucnang] = useState([]);
+    const [menu, setMenu] = useState([]);
     const [selected, setSelected] = useState({});
     const [visible, setVisible] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -20,6 +21,10 @@ export default function MenuPage() {
     const [selectedPhanloai, setSelectedPhanloai] = useState({});
     const [visiblePhanloai, setVisiblePhanloai] = useState(false);
     const [isEditPhanloai, setIsEditPhanloai] = useState(false);
+
+    const [selectedMenu, setSelectedMenu] = useState({});
+    const [visibleMenu, setVisibleMenu] = useState(false);
+    const [isEditMenu, setIsEditMenu] = useState(false);
 
     const toast = useRef(null);
 
@@ -30,6 +35,7 @@ export default function MenuPage() {
         fetchDanhmuc();
         fetchPhanloai();
         fetchChucnang();
+        fetchMenu();
     }, []);
 
     const fetchDanhmuc = () => {
@@ -57,6 +63,14 @@ export default function MenuPage() {
             .then(data => {
                 setchucnang(data);
             });
+    };
+
+    const fetchMenu = () => {
+        fetch('/api/admin/menu', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(res => res.json())
+            .then(data => setMenu(data));
     };
 
     const openNew = () => {
@@ -144,6 +158,50 @@ export default function MenuPage() {
             });
     };
 
+    // Menu CRUD functions
+    const openNewMenu = () => {
+        setSelectedMenu({ dmId: 0, dmTen: '', dmMa: '', dmMota: '', dmStt: 1, dmPid: null, dmIconUrl: '', fnUrl: null });
+        setIsEditMenu(false);
+        setVisibleMenu(true);
+    };
+
+    const openEditMenu = (row) => {
+        setSelectedMenu({ ...row });
+        setIsEditMenu(true);
+        setVisibleMenu(true);
+    };
+
+    const saveMenu = () => {
+        const method = isEditMenu ? 'PUT' : 'POST';
+        const url = isEditMenu ? `/api/admin/updatedanhmuc/${selectedMenu.dmId}` : '/api/admin/adddanhmuc';
+
+        fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(selectedMenu)
+        })
+            .then(res => res.json())
+            .then(() => {
+                toast.current.show({ severity: 'success', summary: 'Thành công', detail: 'Đã lưu menu' });
+                setVisibleMenu(false);
+                fetchMenu();
+            });
+    };
+
+    const deleteMenu = (id) => {
+        fetch(`/api/admin/deletedanhmuc/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(() => {
+                toast.current.show({ severity: 'success', summary: 'Đã xóa', detail: 'Menu đã được xóa' });
+                fetchMenu();
+            });
+    };
+
     const actionBody = (rowData) => (
         <div className="d-flex gap-2">
             <Button icon="pi pi-pencil" className="p-button-sm p-button-text" onClick={() => openEdit(rowData)} />
@@ -157,6 +215,13 @@ export default function MenuPage() {
             <Button icon="pi pi-trash" className="p-button-sm p-button-danger p-button-text" onClick={() => deletePhanloai(rowData.ldmId)} />
         </div>
     );
+
+    const actionBodyMenu = (rowData) => (
+        <div className="d-flex gap-2">
+            <Button icon="pi pi-pencil" className="p-button-sm p-button-text" onClick={() => openEditMenu(rowData)} />
+            <Button icon="pi pi-trash" className="p-button-sm p-button-danger p-button-text" onClick={() => deleteMenu(rowData.dmId)} />
+        </div>
+    );
     const headerdanhmuc = (
         <div className="d-flex justify-content-between mb-2">
             <h5>Danh sách danh mục</h5>
@@ -167,6 +232,13 @@ export default function MenuPage() {
         <div className="d-flex justify-content-between mb-2">
             <h5>Danh sách loại danh mục</h5>
             <Button label="Thêm mới" icon="pi pi-plus" size="small" onClick={openNewPhanloai} />
+        </div>
+    );
+    
+    const headermenu = (
+        <div className="d-flex justify-content-between mb-2">
+            <h5>Danh sách Menu</h5>
+            <Button label="Thêm mới" icon="pi pi-plus" size="small" onClick={openNewMenu} />
         </div>
     );
     return (
@@ -190,6 +262,18 @@ export default function MenuPage() {
                     <Column field="ldmMa" header="Mã" />
                     <Column field="ldmMota" header="Mô tả" />
                     <Column body={actionBodyphanloai} header="Thao tác" />
+                </DataTable>
+            </div>
+
+            <div className="mt-4">
+                <DataTable value={menu} stripedRows header={headermenu} paginator rows={10} className="mb-4">
+                    <Column field="dmTen" header="Tên Menu" />
+                    <Column field="dmMa" header="Mã" />
+                    <Column field="dmMota" header="Mô tả" />
+                    <Column field="dmStt" header="STT" />
+                    <Column field="dmIconUrl" header="Icon" />
+                    <Column field="fnUrl" header="Link" />
+                    <Column body={actionBodyMenu} header="Thao tác" />
                 </DataTable>
             </div>
             <Dialog header={isEdit ? 'Sửa danh mục' : 'Thêm danh mục'} visible={visible} style={{ width: '400px' }} modal onHide={() => setVisible(false)}>
@@ -267,6 +351,49 @@ export default function MenuPage() {
                 <div className="d-flex justify-content-end">
                     <Button label="Hủy" icon="pi pi-times" className="p-button-text me-2" onClick={() => setVisiblePhanloai(false)} />
                     <Button label="Lưu" icon="pi pi-check" className="p-button-primary" onClick={savePhanloai} />
+                </div>
+            </Dialog>
+
+            <Dialog header={isEditMenu ? 'Sửa Menu' : 'Thêm Menu'} visible={visibleMenu} style={{ width: '400px' }} modal onHide={() => setVisibleMenu(false)}>
+                <div className="mb-3">
+                    <label>Tên Menu</label>
+                    <InputText className="form-control" value={selectedMenu.dmTen} onChange={e => setSelectedMenu({ ...selectedMenu, dmTen: e.target.value })} />
+                </div>
+                <div className="mb-3">
+                    <label>Mã</label>
+                    <InputText className="form-control" value={selectedMenu.dmMa} onChange={e => setSelectedMenu({ ...selectedMenu, dmMa: e.target.value })} />
+                </div>
+                <div className="mb-3">
+                    <label>Menu Cha</label>
+                    <Dropdown
+                        className="w-100"
+                        value={selectedMenu.dmPid || null}
+                        options={menu}
+                        optionLabel="dmTen"
+                        optionValue="dmId"
+                        onChange={(e) => setSelectedMenu({ ...selectedMenu, dmPid: e.value })}
+                        placeholder="Chọn menu cha"
+                    />
+                </div>
+                <div className="mb-3">
+                    <label>Mô tả</label>
+                    <InputText className="form-control" value={selectedMenu.dmMota} onChange={e => setSelectedMenu({ ...selectedMenu, dmMota: e.target.value })} />
+                </div>
+                <div className="mb-3">
+                    <label>STT</label>
+                    <InputText className="form-control" type="number" value={selectedMenu.dmStt} onChange={e => setSelectedMenu({ ...selectedMenu, dmStt: parseInt(e.target.value) || 1 })} />
+                </div>
+                <div className="mb-3">
+                    <label>Icon</label>
+                    <InputText className="form-control" value={selectedMenu.dmIconUrl} onChange={e => setSelectedMenu({ ...selectedMenu, dmIconUrl: e.target.value })} placeholder="VD: pi pi-home" />
+                </div>
+                <div className="mb-3">
+                    <label>URL Link</label>
+                    <InputText className="form-control" value={selectedMenu.fnUrl || ''} onChange={e => setSelectedMenu({ ...selectedMenu, fnUrl: e.target.value })} />
+                </div>
+                <div className="d-flex justify-content-end">
+                    <Button label="Hủy" icon="pi pi-times" className="p-button-text me-2" onClick={() => setVisibleMenu(false)} />
+                    <Button label="Lưu" icon="pi pi-check" className="p-button-primary" onClick={saveMenu} />
                 </div>
             </Dialog>
         </div>
