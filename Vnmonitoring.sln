@@ -7,6 +7,12 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "vnmonitoring.client", "vnmo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vnmonitoring.Server", "Vnmonitoring.Server\Vnmonitoring.Server.csproj", "{BF073D37-83A9-4239-B514-7A4949EBD1CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vnmonitoring.Domain", "Vnmonitoring.Domain\Vnmonitoring.Domain.csproj", "{7DCE4137-2623-4F91-985E-B9A8624CF61B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vnmonitoring.Application", "Vnmonitoring.Application\Vnmonitoring.Application.csproj", "{F2BCB184-691D-46FA-97E1-D605B9CF7F48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vnmonitoring.Infrastructure", "Vnmonitoring.Infrastructure\Vnmonitoring.Infrastructure.csproj", "{352A62FD-3ED5-4B20-AC01-350CB2A23F57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +29,18 @@ Global
 		{BF073D37-83A9-4239-B514-7A4949EBD1CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF073D37-83A9-4239-B514-7A4949EBD1CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF073D37-83A9-4239-B514-7A4949EBD1CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DCE4137-2623-4F91-985E-B9A8624CF61B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DCE4137-2623-4F91-985E-B9A8624CF61B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DCE4137-2623-4F91-985E-B9A8624CF61B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DCE4137-2623-4F91-985E-B9A8624CF61B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2BCB184-691D-46FA-97E1-D605B9CF7F48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2BCB184-691D-46FA-97E1-D605B9CF7F48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2BCB184-691D-46FA-97E1-D605B9CF7F48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2BCB184-691D-46FA-97E1-D605B9CF7F48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{352A62FD-3ED5-4B20-AC01-350CB2A23F57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{352A62FD-3ED5-4B20-AC01-350CB2A23F57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{352A62FD-3ED5-4B20-AC01-350CB2A23F57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{352A62FD-3ED5-4B20-AC01-350CB2A23F57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

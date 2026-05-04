@@ -13,6 +13,9 @@
     <ProjectReference Include="..\vnmonitoring.client\vnmonitoring.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\Vnmonitoring.Application\Vnmonitoring.Application.csproj" />
+    <ProjectReference Include="..\Vnmonitoring.Domain\Vnmonitoring.Domain.csproj" />
+    <ProjectReference Include="..\Vnmonitoring.Infrastructure\Vnmonitoring.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +33,18 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="9.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Helpers\FileNameHelper.cs" />
+    <Compile Remove="Models\**\*.cs" />
+    <Compile Remove="Services\EmailHelper.cs" />
+    <Compile Remove="Services\IRainDataService.cs" />
+    <Compile Remove="Services\RainDataHostedService.cs" />
+    <Compile Remove="Services\RainDataService.cs" />
+    <Compile Remove="Services\ReportQueue.cs" />
+    <Compile Remove="Services\WeatherReportProcessor.cs" />
+    <Compile Remove="Utilities\TimeZoneHelper.cs" />
   </ItemGroup>
 
 </Project>

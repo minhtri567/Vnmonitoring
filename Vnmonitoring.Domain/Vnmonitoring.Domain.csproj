@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetTopologySuite" Version="2.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Vnmonitoring.Server\Models\BgmapCommune.cs" Link="Entities\BgmapCommune.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\BgmapDistrict.cs" Link="Entities\BgmapDistrict.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\BgmapProvince.cs" Link="Entities\BgmapProvince.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\IwThongsoquantrac.cs" Link="Entities\IwThongsoquantrac.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\LayerNode.cs" Link="Entities\LayerNode.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\LoginRequest.cs" Link="Entities\LoginRequest.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\MapboxApikey.cs" Link="Entities\MapboxApikey.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\MapLayer.cs" Link="Entities\MapLayer.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\MapLayerCoquanAccess.cs" Link="Entities\MapLayerCoquanAccess.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\MapLayerMemberAccess.cs" Link="Entities\MapLayerMemberAccess.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\MapSource.cs" Link="Entities\MapSource.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\MonitoringDatum.cs" Link="Entities\MonitoringDatum.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\MonitoringStation.cs" Link="Entities\MonitoringStation.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\SysCoquan.cs" Link="Entities\SysCoquan.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\SysDanhmuc.cs" Link="Entities\SysDanhmuc.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\SysDanhmucPhanloai.cs" Link="Entities\SysDanhmucPhanloai.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\SysFunction.cs" Link="Entities\SysFunction.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\SysMember.cs" Link="Entities\SysMember.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\SysRole.cs" Link="Entities\SysRole.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\SysRoleCoquan.cs" Link="Entities\SysRoleCoquan.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\SysRoleMember.cs" Link="Entities\SysRoleMember.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\WeatherStationsReport.cs" Link="Entities\WeatherStationsReport.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Models\WeatherStationsReportList.cs" Link="Entities\WeatherStationsReportList.cs" />
+  </ItemGroup>
+</Project>

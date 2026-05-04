@@ -1,7 +1,10 @@
-﻿using Vnmonitoring.Server.Services;
-using Vnmonitoring.Server.Utilities;
-using Vnmonitoring.Server.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Vnmonitoring.Server.Models;
+using Vnmonitoring.Server.Services;
+using Vnmonitoring.Server.Utilities;
 
 public class RainDataHostedService : BackgroundService
 {
@@ -18,7 +21,6 @@ public class RainDataHostedService : BackgroundService
     {
         try
         {
-            // Lần đầu: check nếu bảng trống thì fetch ngay
             using (var scope = _serviceProvider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<WeatherDataContext>();
@@ -38,6 +40,7 @@ public class RainDataHostedService : BackgroundService
                 var delay = nextHour - now;
                 _logger.LogInformation("Đợi đến giờ tiếp theo: {NextHour}, chờ {Delay}", nextHour, delay);
                 await Task.Delay(delay, stoppingToken);
+
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var rainService = scope.ServiceProvider.GetRequiredService<IRainDataService>();

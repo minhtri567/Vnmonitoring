@@ -1,14 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
 using ClosedXML.Excel;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Globalization;
-using Vnmonitoring.Server.Models;
 using Vnmonitoring.Server.Helpers;
+using Vnmonitoring.Server.Models;
+
 public class WeatherReportProcessor : BackgroundService
 {
     private readonly ReportQueue _reportQueue;
     private readonly ILogger<WeatherReportProcessor> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly EmailHelper _emailHelper;
+
     public WeatherReportProcessor(
         ReportQueue reportQueue,
         ILogger<WeatherReportProcessor> logger,
@@ -74,24 +79,22 @@ public class WeatherReportProcessor : BackgroundService
         ).ToListAsync();
 
         var rawName = report.NameFile == null ? $"Baocaodomua_{report.Id}.xlsx" : report.NameFile;
-
         var fileName = FileNameHelper.NormalizeFileName(rawName);
         var filePath = Path.Combine("Uploads", "Reports", fileName);
         Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-        var timeSlots = rainData.Select(x => x.DataThoigian)
-                                   .Distinct()
-                                   .OrderBy(t => t)
-                                   .ToList();
 
-        // Lấy danh sách trạm duy nhất
+        var timeSlots = rainData.Select(x => x.DataThoigian)
+            .Distinct()
+            .OrderBy(t => t)
+            .ToList();
+
         var allStations = rainData.Select(x => new { x.StationId, x.StationName })
-                                  .Distinct()
-                                  .ToList();
+            .Distinct()
+            .ToList();
+
         using (var workbook = new XLWorkbook())
         {
             var ws = workbook.Worksheets.Add("Rain Report");
-
-            // Header hàng đầu tiên: thời gian
             ws.Cell(1, 1).Value = "Mã trạm đo";
             ws.Cell(1, 2).Value = "Tên trạm đo";
 
@@ -125,7 +128,6 @@ public class WeatherReportProcessor : BackgroundService
             range.Style.Alignment.WrapText = true;
 
             ws.Columns().AdjustToContents();
-
             workbook.SaveAs(filePath);
         }
 
@@ -140,7 +142,7 @@ public class WeatherReportProcessor : BackgroundService
             await _emailHelper.SendEmailWithAttachmentAsync(
                 report.Email,
                 "Báo cáo lượng mưa đã sẵn sàng",
-                $"<p>Xin chào,</p><p>Báo cáo lượng mưa của bạn đã được tạo và đính kèm trong email này.</p><p>Trân trọng.</p>",
+                "<p>Xin chào,</p><p>Báo cáo lượng mưa của bạn đã được tạo và đính kèm trong email này.</p><p>Trân trọng.</p>",
                 filePath
             );
 
@@ -150,6 +152,5 @@ public class WeatherReportProcessor : BackgroundService
         {
             _logger.LogError(ex, "Lỗi gửi email tới {Email}", report.Email);
         }
-
     }
 }

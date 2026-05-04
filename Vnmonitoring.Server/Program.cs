@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Vnmonitoring.Application.Abstractions.Services;
+using Vnmonitoring.Application.Common;
+using Vnmonitoring.Infrastructure;
 using Vnmonitoring.Server.Middlewares;
 using Vnmonitoring.Server.Models;
 using Vnmonitoring.Server.Services;
-using static EmailHelper;
-var builder = WebApplication.CreateBuilder(args);
 
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
 
@@ -54,36 +55,29 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme {
-                Reference = new OpenApiReference {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            Array.Empty<string>()
         }
     });
 });
 
-builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
-builder.Services.AddSingleton<ReportQueue>();
-builder.Services.AddHostedService<WeatherReportProcessor>();
-
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrEmpty(connectionString))
-    throw new InvalidOperationException("DefaultConnection is not configured in appsettings.");
-
-builder.Services.AddDbContext<WeatherDataContext>(options =>
-    options.UseNpgsql(connectionString, x => x.UseNetTopologySuite()));
-
-builder.Services.AddHttpClient<IRainDataService, RainDataService>();
-builder.Services.AddHostedService<RainDataHostedService>();
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var jwtKey = jwtSettings["Key"];
 if (string.IsNullOrEmpty(jwtKey))
+{
     throw new InvalidOperationException("JWT Key is not configured in appsettings.");
+}
+
 var key = Encoding.UTF8.GetBytes(jwtKey);
 
 builder.Services.AddAuthentication(options =>
@@ -98,9 +92,15 @@ builder.Services.AddAuthentication(options =>
     var issuer = jwtSettings["Issuer"];
     var audience = jwtSettings["Audience"];
     if (string.IsNullOrEmpty(issuer))
+    {
         throw new InvalidOperationException("JWT Issuer is not configured in appsettings.");
+    }
+
     if (string.IsNullOrEmpty(audience))
+    {
         throw new InvalidOperationException("JWT Audience is not configured in appsettings.");
+    }
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -114,12 +114,9 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddControllers();
-
 builder.Services.AddScoped<IPasswordHasher<SysMember>, PasswordHasher<SysMember>>();
-builder.Services.Configure<MyConfig>(builder.Configuration.GetSection("MyConfig"));
-builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<IJwtTokenService, JwtService>();
 
-builder.Services.AddTransient<EmailHelper>();
 var app = builder.Build();
 
 app.UseDefaultFiles();
@@ -129,21 +126,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.UseStaticFiles();
-
 app.UseCors("AllowFrontend");
-
-//app.UseHttpsRedirection();
-
 app.UseMiddleware<JwtMiddleware>();
-
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

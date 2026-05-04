@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vnmonitoring.Application\Vnmonitoring.Application.csproj" />
+    <ProjectReference Include="..\Vnmonitoring.Domain\Vnmonitoring.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Vnmonitoring.Server\Models\WeatherDataContext.cs" Link="Persistence\WeatherDataContext.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Services\EmailHelper.cs" Link="Services\EmailHelper.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Services\IRainDataService.cs" Link="Services\IRainDataService.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Services\RainDataHostedService.cs" Link="Services\RainDataHostedService.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Services\RainDataService.cs" Link="Services\RainDataService.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Services\ReportQueue.cs" Link="Services\ReportQueue.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Services\WeatherReportProcessor.cs" Link="Services\WeatherReportProcessor.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Helpers\FileNameHelper.cs" Link="Helpers\FileNameHelper.cs" />
+    <Compile Include="..\Vnmonitoring.Server\Utilities\TimeZoneHelper.cs" Link="Utilities\TimeZoneHelper.cs" />
+  </ItemGroup>
+</Project>

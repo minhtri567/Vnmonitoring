@@ -1,12 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Vnmonitoring.Application.Abstractions.Services;
 using Vnmonitoring.Server.Utilities;
 
 namespace Vnmonitoring.Server.Services
 {
-    public class JwtService
+    public class JwtService : IJwtTokenService
     {
         private readonly IConfiguration _config;
 
@@ -19,16 +20,15 @@ namespace Vnmonitoring.Server.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, username ?? "")
+                new Claim(ClaimTypes.Name, username ?? string.Empty)
             };
 
-            // Thêm từng role vào danh sách claims
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? string.Empty));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
@@ -41,6 +41,5 @@ namespace Vnmonitoring.Server.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
     }
 }
