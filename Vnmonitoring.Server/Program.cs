@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -6,6 +8,7 @@ using System.Text;
 using Vnmonitoring.Application.Abstractions.Services;
 using Vnmonitoring.Application.Common;
 using Vnmonitoring.Infrastructure;
+using Vnmonitoring.Server.Filters;
 using Vnmonitoring.Server.Middlewares;
 using Vnmonitoring.Server.Models;
 using Vnmonitoring.Server.Services;
@@ -113,7 +116,12 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidationFilter>();
+});
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddScoped<IPasswordHasher<SysMember>, PasswordHasher<SysMember>>();
 builder.Services.AddScoped<IJwtTokenService, JwtService>();
 
