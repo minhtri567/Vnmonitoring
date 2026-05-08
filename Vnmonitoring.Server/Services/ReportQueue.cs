@@ -1,7 +1,7 @@
 ﻿using System.Threading.Channels;
 using Vnmonitoring.Server.Models;
 
-public class ReportQueue
+public partial class ReportQueue
 {
     private readonly Channel<WeatherStationsReport> _queue = Channel.CreateUnbounded<WeatherStationsReport>();
 

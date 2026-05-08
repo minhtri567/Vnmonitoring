@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Vnmonitoring.Application.Abstractions.Persistence;
 using Vnmonitoring.Application.Abstractions.Repositories;
-using Vnmonitoring.Server.Models;
 using Vnmonitoring.Server.Services;
+using Vnmonitoring.Server.Models;
 
 namespace Vnmonitoring.Infrastructure;
 
@@ -19,6 +20,7 @@ public static class DependencyInjection
 
         services.AddDbContext<WeatherDataContext>(options =>
             options.UseNpgsql(connectionString, x => x.UseNetTopologySuite()));
+        services.AddScoped<IWeatherDataContext>(serviceProvider => serviceProvider.GetRequiredService<WeatherDataContext>());
 
         services.AddScoped<IUserRepository, UserRepository>();
 
@@ -26,6 +28,7 @@ public static class DependencyInjection
         services.Configure<EmailHelper.SmtpSettings>(configuration.GetSection("SmtpSettings"));
 
         services.AddSingleton<ReportQueue>();
+        services.AddSingleton<Vnmonitoring.Application.Abstractions.Services.IReportQueue>(serviceProvider => serviceProvider.GetRequiredService<ReportQueue>());
         services.AddHostedService<WeatherReportProcessor>();
         services.AddHttpClient<IRainDataService, RainDataService>();
         services.AddHostedService<RainDataHostedService>();
