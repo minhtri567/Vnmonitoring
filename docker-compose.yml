@@ -1,7 +1,8 @@
 services:
   api:
     build:
-      context: ./Vnmonitoring.Server
+      context: .
+      dockerfile: Vnmonitoring.Server/Dockerfile
     ports:
       - "7101:8080"
     environment:
@@ -21,6 +22,8 @@ services:
       context: ./vnmonitoring.client
       args:
         IS_DOCKER: "true"
+    ports:
+      - "5173:80"
     environment:
       - IS_DOCKER=true
       - TZ=Asia/Ho_Chi_Minh
@@ -45,6 +48,7 @@ services:
 
   nginx:
     image: nginx:latest
+    profiles: ["production"]
     ports:
       - "80:80"
       - "443:443"
