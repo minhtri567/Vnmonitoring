@@ -397,3 +397,4 @@ docker-compose.override.yml
 .api-key
 .token
 auth.json
+docker-compose.yml
