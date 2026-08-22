@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\vnmonitoring.client\vnmonitoring.client.esproj">
+    <ProjectReference Include="..\vnmonitoring.client\vnmonitoring.client.esproj" Condition="'$(DisableClientBuild)' != 'true'">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\Vnmonitoring.Application\Vnmonitoring.Application.csproj" />
