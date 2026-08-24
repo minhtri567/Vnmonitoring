@@ -1,52 +1,38 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Vnmonitoring.Server.Models;
 using Vnmonitoring.Server.Utilities;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Vnmonitoring.Server.Services
 {
-    public class ApiResponse
+    public class RainHourlyStationData
     {
-        public int recordsFiltered { get; set; }
-        public int recordsTotal { get; set; }
-        public List<RainStationData> data { get; set; }
-    }
+        [JsonPropertyName("StationNo")]
+        public string StationNo { get; set; }
 
-    public class RainStationData
-    {
-        public string station_id { get; set; }
-        public string station_name { get; set; }
-        public string daterain { get; set; }
-        public string lat { get; set; }
-        public string lon { get; set; }
-        public float h0 { get; set; }
-        public float h1 { get; set; }
-        public float h2 { get; set; }
-        public float h3 { get; set; }
-        public float h4 { get; set; }
-        public float h5 { get; set; }
-        public float h6 { get; set; }
-        public float h7 { get; set; }
-        public float h8 { get; set; }
-        public float h9 { get; set; }
-        public float h10 { get; set; }
-        public float h11 { get; set; }
-        public float h12 { get; set; }
-        public float h13 { get; set; }
-        public float h14 { get; set; }
-        public float h15 { get; set; }
-        public float h16 { get; set; }
-        public float h17 { get; set; }
-        public float h18 { get; set; }
-        public float h19 { get; set; }
-        public float h20 { get; set; }
-        public float h21 { get; set; }
-        public float h22 { get; set; }
-        public float h23 { get; set; }
+        [JsonPropertyName("StationName")]
+        public string StationName { get; set; }
+
+        [JsonPropertyName("StationNameVn")]
+        public string StationNameVn { get; set; }
+
+        [JsonPropertyName("Lat")]
+        public double? Lat { get; set; }
+
+        [JsonPropertyName("Lon")]
+        public double? Lon { get; set; }
+
+        [JsonPropertyName("ProjectID")]
+        public int? ProjectID { get; set; }
+
+        [JsonPropertyName("DtDate")]
+        public DateTime? DtDate { get; set; }
+
+        [JsonPropertyName("Value")]
+        public float? Value { get; set; }
     }
     public class MyConfig
     {
@@ -68,71 +54,81 @@ namespace Vnmonitoring.Server.Services
 
         public async Task FetchAndStoreRainDataAsync()
         {
-            var url = _apiBaseUrl;
-            var todaydate = TimeZoneHelper.GetVietnamNow();
-            if(todaydate.Hour >= 20)
-            {
-                todaydate = todaydate.AddDays(1);
-            }
-            var requestBody = new
-            {
-                start = 1,
-                length = 5000,
-                search_key = "",
-                province_id = "0",
-                luuvuc_id = "",
-                fromDate = todaydate.ToString("dd/MM/yyyy"),
-                toDate = todaydate.ToString("dd/MM/yyyy"),
-                from_number = (int?)null,
-                to_number = (int?)null,
-                orderby = "1",
-                fromObs = 1,
-                toObs = 19,
-                source = 0
-            };
+            var vietnamNow = TimeZoneHelper.GetVietnamNow();
+            var hourTime = new DateTime(vietnamNow.Year, vietnamNow.Month, vietnamNow.Day, vietnamNow.Hour, 0, 0);
+            // Raw SQL (DELETE) đọc kiểu cột thật từ schema (timestamptz) -> cần Kind=Utc.
+            // EF SaveChanges (INSERT) dùng annotation cứng trong WeatherDataContext
+            // ("timestamp without time zone") -> cần Kind=Unspecified. Cùng 1 giá trị giờ VN,
+            // chỉ khác nhãn Kind cho từng đường ghi.
+            var hourTimeForRawSql = DateTime.SpecifyKind(hourTime, DateTimeKind.Utc);
+            var dateString = hourTime.ToString("yyyyMMdd'T'HHmm'Z'");
+            var url = $"{_apiBaseUrl.TrimEnd('/')}/rain1hbyhour/datetime/{dateString}";
 
-            var json = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync(url, content);
+            var response = await _httpClient.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {
-                var cutoffTime = TimeZoneHelper.GetVietnamToday().AddDays(-1).AddHours(20);
-                if (todaydate.Hour >= 20)
-                {
-                    await _context.Database.ExecuteSqlRawAsync("DELETE FROM monitoring_data WHERE data_maloaithongso = 'RAIN' AND data_thoigian >= ((current_date) + time '20:00:00') ;");
-                }
-                else
-                {
-                    await _context.Database.ExecuteSqlRawAsync("DELETE FROM monitoring_data WHERE data_maloaithongso = 'RAIN' AND data_thoigian >= ((current_date - 1) + time '20:00:00') ;");
-                }
-
                 var result = await response.Content.ReadAsStringAsync();
-                var apiData = JsonSerializer.Deserialize<ApiResponse>(result);
-                var entries = new List<MonitoringDatum>();
-                _context.ChangeTracker.AutoDetectChangesEnabled = false;
-                foreach (var station in apiData.data)
+                var jsonPayload = result.TrimStart();
+
+                // API có thể trả về JSON bị encode 2 lần (response body là 1 JSON string
+                // chứa mảng JSON bên trong, ví dụ: "[{\"StationNo\":\"780028\"...}]")
+                if (jsonPayload.StartsWith("\""))
                 {
-                    var baseDate = new DateTime(todaydate.Year, todaydate.Month, todaydate.Day, 0, 0, 0);
-                    int tsktid = GetTsktIdByStationId(station.station_id, station.station_name, float.Parse(station.lat), float.Parse(station.lon), "RAIN");
-                    for (int h = 0; h < 24; h++)
+                    try
                     {
-                        var hourValue = Convert.ToSingle(station.GetType().GetProperty($"h{h}")?.GetValue(station) ?? 0);
-                        var isYesterday = h >= 20;
-                        var rawTime = baseDate.AddDays(isYesterday ? -1 : 0).AddHours(h);
-                        var time = new DateTime(rawTime.Year, rawTime.Month, rawTime.Day, rawTime.Hour, 0, 0);
-                        entries.Add(new MonitoringDatum
-                        {
-                            TsktId = tsktid,
-                            DataThoigian = time,
-                            DataGiatriSothuc = hourValue,
-                            DataMaloaithongso = "RAIN",
-                            Createby = "system"
-                        });
+                        jsonPayload = JsonSerializer.Deserialize<string>(jsonPayload) ?? jsonPayload;
+                    }
+                    catch (JsonException)
+                    {
+                        // không phải chuỗi hợp lệ, giữ nguyên payload gốc để log lỗi bên dưới
                     }
                 }
-                await _context.MonitoringData.AddRangeAsync(entries);
+
+                List<RainHourlyStationData>? stations;
+                try
+                {
+                    stations = JsonSerializer.Deserialize<List<RainHourlyStationData>>(jsonPayload);
+                }
+                catch (JsonException ex)
+                {
+                    var preview = result.Length > 2000 ? result.Substring(0, 2000) : result;
+                    _logger.LogError(ex, "Không parse được JSON từ API mưa cho giờ {HourTime}. Raw response (tối đa 2000 ký tự): {Preview}", hourTime, preview);
+                    return;
+                }
+
+                if (stations == null || stations.Count == 0)
+                {
+                    _logger.LogWarning("Không có dữ liệu mưa trả về cho giờ {HourTime}", hourTime);
+                    return;
+                }
+
+                await _context.Database.ExecuteSqlInterpolatedAsync(
+                    $"DELETE FROM monitoring_data WHERE data_maloaithongso = 'RAIN' AND data_thoigian = {hourTimeForRawSql};");
+
+                var entries = new Dictionary<int, MonitoringDatum>();
+                _context.ChangeTracker.AutoDetectChangesEnabled = false;
+                foreach (var station in stations)
+                {
+                    if (string.IsNullOrWhiteSpace(station.StationNo) || station.Value == null)
+                    {
+                        continue;
+                    }
+                    int tsktid = GetTsktIdByStationId(station.StationNo, station.StationName, station.Lat, station.Lon, "RAIN");
+                    if (tsktid == 0)
+                    {
+                        continue;
+                    }
+                    entries[tsktid] = new MonitoringDatum
+                    {
+                        TsktId = tsktid,
+                        DataThoigian = hourTime,
+                        DataGiatriSothuc = station.Value.Value,
+                        DataMaloaithongso = "RAIN",
+                        Createby = "system"
+                    };
+                }
+                await _context.MonitoringData.AddRangeAsync(entries.Values);
                 await _context.SaveChangesAsync();
                 _context.ChangeTracker.AutoDetectChangesEnabled = true;
             }
@@ -142,7 +138,7 @@ namespace Vnmonitoring.Server.Services
             }
         }
 
-        private int GetTsktIdByStationId(string stationId, string name, float lat, float lon, string data_type)
+        private int GetTsktIdByStationId(string stationId, string name, double? lat, double? lon, string data_type)
         {
             int? TsktId = (from a in _context.IwThongsoquantracs
                            where a.StationId == stationId && a.TsktMaloaithongso == data_type
